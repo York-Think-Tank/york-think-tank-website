@@ -12,7 +12,7 @@ This is choosen as it comes with an UI at `/admin`, non-technical users can just
 5. Run `npm install` to install the dependencies
 6. Run `npm run develop` to start the Strapi server
 7. Open `http://localhost:1337/admin` in your browser to access the Strapi
-
+8. Your changes will be in the `scr/api/` so need to commit that to the repo
 ## Frontend
 The frontend will be written with Svelte and consume the Strapi endpoints, this will be created first, with dummy data.
 
