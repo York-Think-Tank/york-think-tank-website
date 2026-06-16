@@ -1,9 +1,9 @@
 <!-- Desktop -->
 <div class="hidden sm:flex w-full bg-[#e8eef5] items-center justify-center py-8">
-  <div class="bg-[#febd59] w-[38%] h-[420px] flex items-center justify-center z-10 overflow-hidden">
+  <div class="bg-[#febd59] w-[45%] max-w-md h-[420px] flex items-center justify-center z-10 overflow-hidden">
     <img src="/images/bulb.avif" alt="York Think Tank logo" class="w-1/2 object-contain" />
   </div>
-  <div class="bg-[#9a0002] w-[45%] h-[360px] flex items-center justify-center -ml-8">
+  <div class="bg-[#9a0002] w-[55%] h-[360px] flex items-center justify-center -ml-8">
     <div class="bg-[#faf8f0] w-[80%] h-[80%] flex flex-col items-center justify-center text-center p-6">
       <h1 class="text-5xl font-black text-[#030200] leading-none tracking-tight">
         YORK<br/>THINK<br/>TANK
