@@ -1,2 +1,15 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script lang="ts">
+	import Header from '$lib/sections/header.svelte';
+	import About from '$lib/sections/about.svelte';
+    import Committee from '$lib/sections/committee.svelte';
+	import Projects from '$lib/sections/projects.svelte';
+	import JournalsForums from '$lib/sections/journals-forums.svelte';
+	import Events from '$lib/sections/events.svelte';
+</script>
+
+<Header />
+<About />
+<Committee />
+<Projects />
+<JournalsForums />
+<Events />
