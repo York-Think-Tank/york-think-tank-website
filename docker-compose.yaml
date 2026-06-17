@@ -1,16 +1,53 @@
 services:
+  strapi:
+    container_name: strapi
+    build:
+      context: ./content-management-system
+      dockerfile: Dockerfile
+    image: strapi:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_HOST: strapiDB
+    volumes:
+      - ./content-management-system/config:/opt/app/config
+      - ./content-management-system/src:/opt/app/src
+      - ./content-management-system/package.json:/opt/package.json
+      - ./content-management-system/package-lock.json:/opt/package-lock.json
+      - ./.env:/opt/app/.env
+      - ./content-management-system/public/uploads:/opt/app/public/uploads
+    ports:
+      - "1337:1337"
+    networks:
+      - strapi
+    depends_on:
+      strapiDB:
+        condition: service_healthy
+
   strapiDB:
     container_name: strapiDB
+    restart: unless-stopped
     image: postgres:18.4-alpine3.23
-    env_file: .env
     environment:
       POSTGRES_USER: ${DATABASE_USERNAME}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       POSTGRES_DB: ${DATABASE_NAME}
-    ports:
-      - "${DATABASE_PORT}:5432"
     volumes:
       - strapi-data:/var/lib/postgresql
+    ports:
+      - "${HOST_DATABASE_PORT}:5432"
+    networks:
+      - strapi
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME} -d ${DATABASE_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   strapi-data:
+
+networks:
+  strapi:
+    name: strapi
+    driver: bridge
