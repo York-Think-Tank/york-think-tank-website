@@ -1,5 +1,5 @@
 <!-- Desktop -->
-<div class="hidden sm:flex w-full bg-[#e8eef5] items-center justify-center py-8">
+<section class="hidden sm:flex w-full bg-[#e8eef5] items-center justify-center py-8">
   <div class="bg-[#febd59] w-[45%] max-w-md h-[420px] flex items-center justify-center z-10 overflow-hidden">
     <img src="/images/bulb.avif" alt="York Think Tank logo" class="w-1/2 object-contain" />
   </div>
@@ -13,10 +13,10 @@
       </p>
     </div>
   </div>
-</div>
+</section>
 
 <!-- Mobile -->
-<div class="flex flex-col sm:hidden">
+<section class="flex flex-col sm:hidden">
   <div class="bg-[#febd59] flex items-center justify-center py-1">
     <img src="/images/bulb.avif" alt="York Think Tank logo" class="w-12 object-contain" />
   </div>
@@ -30,4 +30,4 @@
       </p>
     </div>
   </div>
-</div>
+</section>
