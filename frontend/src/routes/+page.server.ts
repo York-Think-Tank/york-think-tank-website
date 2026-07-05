@@ -1,14 +1,22 @@
 import { STRAPI_READ_API_KEY, STRAPI_URL } from '$env/static/private';
 
+const headers = {
+    Authorization: `Bearer ${STRAPI_READ_API_KEY}`
+};
+
 export async function load() {
-    const res = await fetch(`${STRAPI_URL}/api/about-page?populate=*`, {
-        headers: {
-            Authorization: `Bearer ${STRAPI_READ_API_KEY}`
-        }
-    });
-    const { data } = await res.json();
+    const [aboutRes, committeeRes] = await Promise.all([
+        fetch(`${STRAPI_URL}/api/about-section?populate=*`, { headers }),
+        fetch(
+            `${STRAPI_URL}/api/ytt-contributors?filters[current_or_past_committee][$eq]=Current&populate=photo&sort=createdAt:asc`,
+            { headers }
+        )
+    ]);
+    const { data: aboutPage } = await aboutRes.json();
+    const { data: committeeMembers } = await committeeRes.json();
     return {
-        aboutPage: data,
+        aboutPage,
+        committeeMembers: committeeMembers ?? [],
         strapiUrl: STRAPI_URL
     };
 }
