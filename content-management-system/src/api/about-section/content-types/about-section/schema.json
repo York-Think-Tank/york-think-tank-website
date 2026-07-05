@@ -2,9 +2,9 @@
   "kind": "singleType",
   "collectionName": "about_pages",
   "info": {
-    "singularName": "about-page",
-    "pluralName": "about-pages",
-    "displayName": "About-page"
+    "singularName": "about-section",
+    "pluralName": "about-sections",
+    "displayName": "About Section"
   },
   "options": {
     "draftAndPublish": true
@@ -19,7 +19,7 @@
       "type": "blocks",
       "required": true
     },
-    "groups_images": {
+    "about_images": {
       "type": "media",
       "multiple": true,
       "required": true,
