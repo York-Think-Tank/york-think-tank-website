@@ -1,0 +1,62 @@
+{
+  "kind": "collectionType",
+  "collectionName": "ytt_members",
+  "info": {
+    "singularName": "ytt-contributor",
+    "pluralName": "ytt-contributors",
+    "displayName": "YTT Contributor"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "photo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "bio": {
+      "type": "blocks"
+    },
+    "current_or_past_committee": {
+      "type": "enumeration",
+      "enum": [
+        "Current",
+        "Past"
+      ]
+    },
+    "current_committee_position": {
+      "type": "string",
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "current_or_past_committee"
+            },
+            "Current"
+          ]
+        }
+      }
+    },
+    "past_comittee_position": {
+      "type": "string",
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "current_or_past_committee"
+            },
+            "Past"
+          ]
+        }
+      }
+    }
+  }
+}
