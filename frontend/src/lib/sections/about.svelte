@@ -1,26 +1,26 @@
 <script lang="ts">
     let { data, strapiUrl }: { data: any; strapiUrl: string } = $props();
 
-    const images = data.groups_images;
+    const images = data.about_images;
     const aboutParagraphs = data.about;
     const missionItems = data.mission[0].children;
 </script>
 
 <section class="bg-[#9a0002] p-8">
     <!--About us title-->
-    <h2 class="text-4xl font-black text-[#febd59] text-center mb-8">
+    <h2 class="text-3xl md:text-4xl font-black text-[#febd59] text-center mb-8">
         ABOUT US
     </h2>
     <!--About us text section-->
     <!--mx-auto to center the div-->
-    <div class="text-[#faf8f0] mb-6 max-w-6xl mx-auto">
+    <div class="text-base md:text-lg text-[#faf8f0] mb-6 max-w-6xl mx-auto">
         {#each aboutParagraphs as paragraph}
             <p class="mb-4">
                 {paragraph.children[0].text}
             </p>
         {/each}
 
-        <h3 class="text-2xl font-black text-[#febd59] mb-4">
+        <h3 class="text-base md:text-2xl font-black text-[#febd59] mb-4">
             Our Mission
         </h3>
 
