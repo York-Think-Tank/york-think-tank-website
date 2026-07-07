@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "civitas_policy_projects",
+  "info": {
+    "singularName": "civitas-policy-project",
+    "pluralName": "civitas-policy-projects",
+    "displayName": "Civitas Policy Project"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "pdf": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "files"
+      ]
+    },
+    "cover_image": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "contributors": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::ytt-contributor.ytt-contributor"
+    }
+  }
+}
