@@ -2,11 +2,19 @@
     let { members = [], strapiUrl }: { members: any[]; strapiUrl: string } = $props();
 </script>
 
-<section class="bg-[#ffc9c2] p-8">
-    <!--Committee title-->
-    <h2 class="text-3xl md:text-4xl font-black text-[#9a0002] text-center mb-8">
+<section class="bg-[#e8eef5] p-8">
+    <!--Committee title, with a quiet link through to the full contributor search page-->
+    <h2 class="text-3xl md:text-4xl font-black text-[#9a0002] text-center mb-2">
         OUR COMMITTEE
     </h2>
+    <p class="text-center mb-8">
+        <a
+            href="/contributors"
+            class="text-base md:text-lg font-black text-[#9a0002] underline decoration-[#9a0002]/40 decoration-2 underline-offset-4 hover:decoration-[#9a0002] transition"
+        >
+            and our other contributors →
+        </a>
+    </p>
 
     <!--Member cards: 3 across on mobile, 4 across on desktop.
         Flex + justify-center (not grid) so a short last row centers instead of left-aligning;
@@ -17,7 +25,7 @@
                 underline is the persistent clickable cue,
                 border flips burgundy->gold on hover for desktop feedback-->
             <a
-                href="/members/{member.documentId}"
+                href="/contributors/{member.documentId}"
                 class="group flex flex-col items-center text-center gap-3 w-[calc((100%-2rem)/3)] md:w-[calc((100%-4.5rem)/4)]"
             >
                 <h3 class="text-base md:text-2xl font-black text-[#9a0002] leading-tight">
