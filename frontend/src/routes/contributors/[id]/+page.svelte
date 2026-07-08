@@ -1,5 +1,24 @@
 <script lang="ts">
+    import { afterNavigate } from '$app/navigation';
+
     let { data } = $props();
+
+    // Back target, in priority order:
+    // 1. ?back=... on our own URL - homepage links declare their section explicitly
+    //    (scrolling never updates the hash, so the router can't tell #committee
+    //    from #projects; only the clicked link knows where it lives)
+    // 2. the in-app page we navigated from (search results keep their query)
+    // 3. plain home, for direct visits and shared links
+    let navigatedFrom = $state<string | null>(null);
+    afterNavigate(({ from }) => {
+        if (from?.url) {
+            navigatedFrom = from.url.pathname + from.url.search + from.url.hash;
+        }
+    });
+    const backHref = $derived(data.back ?? navigatedFrom ?? '/');
+    const backLabel = $derived(
+        backHref === '/' || backHref.startsWith('/#') ? '← Back to home' : '← Back'
+    );
 
     const contributor = $derived(data.contributor);
     const strapiUrl = $derived(data.strapiUrl);
@@ -32,10 +51,10 @@
         <!--Top bar: back link + contributor search-->
         <div class="flex flex-wrap items-center justify-between gap-4">
             <a
-                href="/"
+                href={backHref}
                 class="text-base md:text-lg font-black text-[#febd59] underline decoration-[#febd59]/40 decoration-2 underline-offset-4 hover:decoration-[#febd59] transition"
             >
-                ← Back to home
+                {backLabel}
             </a>
             <!--Small search: submits to the contributors search page (/contributors?q=...)-->
             <form action="/contributors" method="get" class="w-44 md:w-56">

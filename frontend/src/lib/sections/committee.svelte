@@ -2,7 +2,7 @@
     let { members = [], strapiUrl }: { members: any[]; strapiUrl: string } = $props();
 </script>
 
-<section class="bg-[#e8eef5] p-8">
+<section id="committee" class="bg-[#e8eef5] p-8">
     <!--Committee title, with a quiet link through to the full contributor search page-->
     <h2 class="text-3xl md:text-4xl font-black text-[#9a0002] text-center mb-2">
         OUR COMMITTEE
@@ -25,7 +25,7 @@
                 underline is the persistent clickable cue,
                 border flips burgundy->gold on hover for desktop feedback-->
             <a
-                href="/contributors/{member.documentId}"
+                href="/contributors/{member.documentId}?back=/%23committee"
                 class="group flex flex-col items-center text-center gap-3 w-[calc((100%-2rem)/3)] md:w-[calc((100%-4.5rem)/4)]"
             >
                 <h3 class="text-base md:text-2xl font-black text-[#9a0002] leading-tight">
