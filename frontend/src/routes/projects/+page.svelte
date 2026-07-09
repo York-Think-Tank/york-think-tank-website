@@ -1,6 +1,6 @@
 <script lang="ts">
     import SearchPage from '$lib/components/search-page.svelte';
-    import ProjectCard from '$lib/components/project-card.svelte';
+    import PublicationCard from '$lib/components/publication-card.svelte';
 
     let { data } = $props();
 
@@ -19,8 +19,10 @@
 >
     {#snippet results()}
         {#each projects as project}
-            <ProjectCard
-                {project}
+            <PublicationCard
+                publication={project}
+                href="{data.strapiUrl}{project.pdf?.url}"
+                external
                 strapiUrl={data.strapiUrl}
                 class="w-[calc((100%-1rem)/2)] md:w-[calc((100%-3rem)/3)]"
             />

@@ -28,7 +28,7 @@
     title, GET search form, and a flex-wrap results area rendered via the results snippet.
     Used by /contributors and /projects; Civitas Forum and Journals reuse it the same way-->
 <svelte:head>
-    <title>{headTitle} — York Think Tank</title>
+    <title>{headTitle} - York Think Tank</title>
 </svelte:head>
 
 <div class="min-h-dvh bg-[#9a0002] p-6 md:p-8">

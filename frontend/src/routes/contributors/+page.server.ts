@@ -1,20 +1,10 @@
-import { STRAPI_READ_API_KEY, STRAPI_URL } from '$env/static/private';
-
-const headers = {
-    Authorization: `Bearer ${STRAPI_READ_API_KEY}`
-};
+import { STRAPI_URL, strapi } from '$lib/server/strapi';
 
 export async function load({ url }) {
     const q = url.searchParams.get('q')?.trim() ?? '';
     const filter = q ? `&filters[name][$containsi]=${encodeURIComponent(q)}` : '';
-    const res = await fetch(
-        `${STRAPI_URL}/api/ytt-contributors?populate=photo&sort=name:asc&pagination[pageSize]=100${filter}`,
-        { headers }
+    const contributors = await strapi(
+        `ytt-contributors?populate=photo&sort=name:asc&pagination[pageSize]=100${filter}`
     );
-    const { data: contributors } = await res.json();
-    return {
-        contributors: contributors ?? [],
-        q,
-        strapiUrl: STRAPI_URL
-    };
+    return { contributors: contributors ?? [], q, strapiUrl: STRAPI_URL };
 }

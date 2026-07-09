@@ -1,5 +1,5 @@
 <script lang="ts">
-    import ProjectCard from '$lib/components/project-card.svelte';
+    import PublicationCard from '$lib/components/publication-card.svelte';
 
     let { projects = [], strapiUrl }: { projects: any[]; strapiUrl: string } = $props();
 </script>
@@ -26,8 +26,10 @@
             filling left to right-->
         <div class="flex flex-wrap justify-start md:justify-center gap-4 md:gap-6 w-full md:w-[85vw] mx-auto">
             {#each projects.slice(0, 6) as project}
-                <ProjectCard
-                    {project}
+                <PublicationCard
+                    publication={project}
+                    href="{strapiUrl}{project.pdf?.url}"
+                    external
                     {strapiUrl}
                     bylineBack="/#projects"
                     class="w-[calc((100%-1rem)/2)] md:w-[calc((100%-3rem)/3)] xl:w-[calc((100%-4.5rem)/4)]"
