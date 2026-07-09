@@ -1,0 +1,32 @@
+{
+  "kind": "collectionType",
+  "collectionName": "civitas_journals",
+  "info": {
+    "singularName": "civitas-journal",
+    "pluralName": "civitas-journals",
+    "displayName": "Civitas Journal"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "pdf": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "files"
+      ]
+    },
+    "contributors": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::ytt-contributor.ytt-contributor"
+    }
+  }
+}
