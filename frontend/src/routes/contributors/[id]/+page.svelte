@@ -32,12 +32,30 @@
               : null
     );
 
-    // Contribution columns: projects are live; Forum and Journals get wired the
-    // same way once their collection types (with a contributor relation) exist
+    // Contribution columns: projects and journals open their PDF, forum posts
+    // open their own reading page
     const contributionKinds = $derived([
-        { name: 'Civitas Policy Projects', items: data.projects },
-        { name: 'Civitas Forum', items: [] },
-        { name: 'Civitas Journals', items: [] }
+        {
+            name: 'Civitas Policy Projects',
+            items: data.projects,
+            href: (item: any) => `${strapiUrl}${item.pdf?.url}`,
+            external: true,
+            coverAspect: 'aspect-[3/2]'
+        },
+        {
+            name: 'Civitas Forum',
+            items: data.forumPosts,
+            href: (item: any) => `/forum/${item.documentId}`,
+            external: false,
+            coverAspect: 'aspect-[3/2]'
+        },
+        {
+            name: 'Civitas Journals',
+            items: data.journals,
+            href: (item: any) => `${strapiUrl}${item.pdf?.url}`,
+            external: true,
+            coverAspect: 'aspect-[3/4]'
+        }
     ]);
 </script>
 
@@ -106,9 +124,8 @@
             {/if}
         </div>
 
-        <!--Contributions: fills the remaining ~70% of the page.
-            When the project/blog/journal collection types exist, fetch each with an
-            author filter in +page.server.ts and render the entries in these columns-->
+        <!--Contributions: fills the remaining ~70% of the page-->
+
         <div class="grow mt-10">
             <h2 class="text-xl md:text-2xl font-black text-[#febd59] text-center mb-6">
                 CONTRIBUTIONS
@@ -122,16 +139,18 @@
                         {#if kind.items.length}
                             <div class="flex flex-col gap-3">
                                 {#each kind.items as item}
-                                    <!--Cover image card; clicking opens the PDF-->
+                                    <!--Cover image card; clicking opens the PDF or post-->
                                     <a
-                                        href="{strapiUrl}{item.pdf?.url}"
-                                        target="_blank"
-                                        rel="noopener"
-                                        aria-label="Open the {item.title} PDF"
+                                        href={kind.href(item)}
+                                        target={kind.external ? '_blank' : undefined}
+                                        rel={kind.external ? 'noopener' : undefined}
+                                        aria-label={kind.external
+                                            ? `Open the ${item.title} PDF`
+                                            : `Read ${item.title}`}
                                         class="group block"
                                     >
                                         {#if item.cover_image}
-                                            <div class="aspect-[3/2] overflow-hidden bg-[#faf8f0]">
+                                            <div class="{kind.coverAspect} overflow-hidden bg-[#faf8f0]">
                                                 <img
                                                     src="{strapiUrl}{item.cover_image.url}"
                                                     alt={item.cover_image.alternativeText ?? item.title}

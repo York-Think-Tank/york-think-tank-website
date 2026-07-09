@@ -13,5 +13,9 @@
 <About data={data.aboutPage} strapiUrl={data.strapiUrl} />
 <Committee members={data.committeeMembers} strapiUrl={data.strapiUrl} />
 <Projects projects={data.projects} strapiUrl={data.strapiUrl} />
-<JournalsForums />
+<JournalsForums
+    journals={data.journals}
+    forumPosts={data.forumPosts}
+    strapiUrl={data.strapiUrl}
+/>
 <Events />

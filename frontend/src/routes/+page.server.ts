@@ -1,28 +1,25 @@
-import { STRAPI_READ_API_KEY, STRAPI_URL } from '$env/static/private';
-
-const headers = {
-    Authorization: `Bearer ${STRAPI_READ_API_KEY}`
-};
+import { STRAPI_URL, strapi } from '$lib/server/strapi';
 
 export async function load() {
-    const [aboutRes, committeeRes, projectsRes] = await Promise.all([
-        fetch(`${STRAPI_URL}/api/about-section?populate=*`, { headers }),
-        fetch(
-            `${STRAPI_URL}/api/ytt-contributors?filters[current_or_past_committee][$eq]=Current&populate=photo&sort=createdAt:asc`,
-            { headers }
+    const [aboutPage, committeeMembers, projects, journals, forumPosts] = await Promise.all([
+        strapi('about-section?populate=*'),
+        strapi(
+            'ytt-contributors?filters[current_or_past_committee][$eq]=Current&populate=photo&sort=createdAt:asc'
         ),
-        fetch(
-            `${STRAPI_URL}/api/civitas-policy-projects?populate[pdf]=true&populate[cover_image]=true&populate[contributors]=true&sort=createdAt:desc`,
-            { headers }
+        strapi(
+            'civitas-policy-projects?populate[pdf]=true&populate[cover_image]=true&populate[contributors]=true&sort=createdAt:desc'
+        ),
+        strapi('civitas-journals?populate[pdf]=true&populate[contributors]=true&sort=createdAt:desc'),
+        strapi(
+            'civitas-forum-posts?populate[cover_image]=true&populate[contributors]=true&sort=createdAt:desc'
         )
     ]);
-    const { data: aboutPage } = await aboutRes.json();
-    const { data: committeeMembers } = await committeeRes.json();
-    const { data: projects } = await projectsRes.json();
     return {
         aboutPage,
         committeeMembers: committeeMembers ?? [],
         projects: projects ?? [],
+        journals: journals ?? [],
+        forumPosts: forumPosts ?? [],
         strapiUrl: STRAPI_URL
     };
 }
