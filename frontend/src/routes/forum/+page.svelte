@@ -22,6 +22,7 @@
             <PublicationCard
                 publication={post}
                 href="/forum/{post.documentId}"
+                date={post.publishedAt ?? post.createdAt}
                 strapiUrl={data.strapiUrl}
                 class="w-[calc((100%-1rem)/2)] md:w-[calc((100%-3rem)/3)]"
             />

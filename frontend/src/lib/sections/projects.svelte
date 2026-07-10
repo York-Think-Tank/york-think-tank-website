@@ -30,6 +30,8 @@
                     publication={project}
                     href="{strapiUrl}{project.pdf?.url}"
                     external
+                    date={project.publishedAt ?? project.createdAt}
+                    borderColor="#febd59"
                     {strapiUrl}
                     bylineBack="/#projects"
                     class="w-[calc((100%-1rem)/2)] md:w-[calc((100%-3rem)/3)] xl:w-[calc((100%-4.5rem)/4)]"

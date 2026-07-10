@@ -1,67 +1,107 @@
 <script lang="ts">
     import ContributorByline from '$lib/components/contributor-byline.svelte';
+    import { formatDate } from '$lib/format';
 
     let {
         publication,
         href,
         external = false,
-        coverAspect = 'aspect-[3/2]',
+        date = null,
+        coverAspect = 'aspect-[4/3]',
+        color = '#9a0002',
+        borderColor = '#9a0002',
         strapiUrl,
         bylineBack = null,
         class: className = ''
     }: {
         publication: any;
-        // Full link target: a Strapi PDF URL (external) or an in-app route like /forum/...
+        // Link target: an external Strapi PDF url (external) or an in-app route like /forum/...
         href: string;
+        // External PDF: opens in a new tab and shows a "PDF ↗" badge over the cover
         external?: boolean;
-        // Cover ratio as a Tailwind class: 3/2 for projects and forum posts,
-        // aspect-[3/4] gives journals a book-cover look
+        // ISO timestamp shown under the title; null/omitted hides the date line
+        date?: string | null;
+        // Cover ratio as a Tailwind class (forum & projects share the 4/3 default)
         coverAspect?: string;
+        // Accent colour for the title, date and byline text. A runtime value, so it rides
+        // on inline styles, not a Tailwind class (those are generated ahead of time)
+        color?: string;
+        // Outline colour, separate from the text so a card can have e.g. a gold border
+        // with burgundy text. Width is a fixed 4px (border-4) for every card, matching
+        // the weight of the old gold-background frame
+        borderColor?: string;
         strapiUrl: string;
-        // Where the profile page's back link should return to (e.g. "/#projects"
-        // from the homepage section). Omit on search pages: the router already
-        // knows the origin route there
+        // Where a profile page's back link returns to (e.g. "/#projects")
         bylineBack?: string | null;
         class?: string;
     } = $props();
+
+    const published = $derived(formatDate(date));
 </script>
 
-<!--Publication card shared by Civitas Policy Projects, Journals and Forum posts:
-    image + title strip link to the PDF (external) or the post's own page; contributor
-    names link to their profile pages (links can't nest, so they sit outside the main link).
-    flex-col + grow chain keeps cards in a row flush when a row-mate is taller-->
-<!--Gold card with p-1 so the image sits framed by gold on every side-->
-<div class="flex flex-col rounded-lg border-2 border-[#febd59] bg-[#febd59] p-1 {className}">
+<!--Publication card shared by Civitas Policy Projects, Journals and Forum posts.
+    Forum-style layout: cover image on top, then title, date and contributor byline.
+    Image and title link to the item (an external PDF or an in-app page); external PDFs
+    get a "PDF ↗" badge. Contributor names link to their own profiles, so they sit outside
+    the main link (links can't nest). flex-col + grow keeps cards in a row the same height.-->
+<div
+    class="group flex flex-col rounded-lg border-4 bg-white shadow-sm hover:shadow-md transition {className}"
+    style="border-color: {borderColor}"
+>
     <a
         {href}
         target={external ? '_blank' : undefined}
         rel={external ? 'noopener' : undefined}
         aria-label={external ? `Open the ${publication.title} PDF` : `Read ${publication.title}`}
-        class="group flex grow flex-col"
+        class="relative block {coverAspect} overflow-hidden rounded-t-[4px] bg-[#faf8f0]"
     >
-        <div class="{coverAspect} rounded overflow-hidden bg-[#faf8f0]">
-            {#if publication.cover_image}
-                <img
-                    src="{strapiUrl}{publication.cover_image.url}"
-                    alt={publication.cover_image.alternativeText ?? publication.title}
-                    class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                />
-            {/if}
-        </div>
-        <div class="bg-[#febd59] px-2 py-2 md:px-4 md:py-3 flex grow items-start justify-between gap-2 md:gap-3">
-            <p class="text-xs md:text-lg font-black text-[#9a0002] leading-tight min-w-0 break-words line-clamp-2">
-                {publication.title}
-            </p>
+        {#if publication.cover_image}
+            <img
+                src="{strapiUrl}{publication.cover_image.url}"
+                alt={publication.cover_image.alternativeText ?? publication.title}
+                class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+            />
+        {/if}
+        <!--Only external (PDF) links get the badge; in-app cards are read on the site-->
+        {#if external}
             <span
-                class="shrink-0 text-[10px] md:text-sm font-black text-[#febd59] bg-[#9a0002] rounded px-1.5 py-0.5 md:px-2 md:py-1 group-hover:text-[#9a0002] group-hover:bg-[#faf8f0] transition"
+                class="absolute top-2 right-2 text-[10px] md:text-sm font-black text-[#9a0002] bg-[#febd59] rounded px-1.5 py-0.5 md:px-2 md:py-1 shadow"
             >
-                {external ? 'PDF ↗' : 'Read →'}
+                PDF ↗
             </span>
-        </div>
+        {/if}
     </a>
-    <ContributorByline
-        contributors={publication.contributors ?? []}
-        back={bylineBack}
-        class="bg-[#febd59] rounded-b px-2 pb-2 md:px-4 md:pb-3 text-xs md:text-sm text-[#9a0002] break-words"
-    />
+    <div class="grow p-3">
+        <!--Title links to the same target as the image; the underline fades in gold on
+            hover, matching the site's gold link-hover accent-->
+        <a
+            {href}
+            target={external ? '_blank' : undefined}
+            rel={external ? 'noopener' : undefined}
+            class="block"
+        >
+            <!--line-clamp quirks: the underline lives on an inner <span> (Chrome only
+                underlines a -webkit-box's first line), and at offset-2 rather than the
+                usual offset-4 (the clamp's overflow:hidden clips right under the last
+                line's text, so a deeper offset pushes that line's underline out of view)-->
+            <p
+                class="min-h-[2lh] text-sm md:text-base font-black leading-tight line-clamp-2"
+                style="color: {color}"
+            >
+                <span
+                    class="underline decoration-transparent decoration-2 underline-offset-2 group-hover:decoration-[#febd59] transition"
+                    >{publication.title}</span
+                >
+            </p>
+        </a>
+        {#if published}
+            <p class="mt-1 text-xs md:text-sm" style="color: {color}">{published}</p>
+        {/if}
+        <ContributorByline
+            contributors={publication.contributors ?? []}
+            back={bylineBack}
+            {color}
+            class="mt-0.5"
+        />
+    </div>
 </div>

@@ -1,6 +1,6 @@
 <script lang="ts">
     import ContributorByline from '$lib/components/contributor-byline.svelte';
-    import { formatDate } from '$lib/format';
+    import PublicationCard from '$lib/components/publication-card.svelte';
 
     let {
         journals = [],
@@ -110,7 +110,7 @@
                                     <ContributorByline
                                         contributors={journal.contributors ?? []}
                                         back="/#journals-forum"
-                                        class="mt-0.5 text-xs md:text-sm text-[#030200]/50"
+                                        class="mt-0.5 text-[#030200]/50"
                                     />
                                 </div>
                                 <a
@@ -152,46 +152,15 @@
                 {#if forumPosts.length}
                     <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
                         {#each forumPosts.slice(0, 6) as post}
-                            {@const back = encodeURIComponent('/#journals-forum')}
-                            <!--Not a single link: image and title link to the post, the author name
-                                links to their profile (a link can't nest in another)-->
-                            <div
-                                class="group flex flex-col rounded-lg border border-[#9a0002] shadow-sm hover:shadow-md transition"
-                            >
-                                <a
-                                    href="/forum/{post.documentId}?back={back}"
-                                    aria-label="Read {post.title}"
-                                    class="block aspect-[4/3] overflow-hidden rounded-t-lg bg-[#faf8f0]"
-                                >
-                                    {#if post.cover_image}
-                                        <img
-                                            src="{strapiUrl}{post.cover_image.url}"
-                                            alt={post.cover_image.alternativeText ?? post.title}
-                                            class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                                        />
-                                    {/if}
-                                </a>
-                                <div class="grow p-3">
-                                    <!--Title, burgundy, links to the post-->
-                                    <a href="/forum/{post.documentId}?back={back}" class="block">
-                                        <p
-                                            class="min-h-[2lh] text-sm md:text-base font-black text-[#9a0002] leading-tight underline decoration-transparent decoration-2 underline-offset-4 group-hover:decoration-[#9a0002] transition line-clamp-2"
-                                        >
-                                            {post.title}
-                                        </p>
-                                    </a>
-                                    {#if formatDate(post.publishedAt)}
-                                        <p class="mt-1 text-xs text-[#9a0002]">
-                                            {formatDate(post.publishedAt)}
-                                        </p>
-                                    {/if}
-                                    <ContributorByline
-                                        contributors={post.contributors ?? []}
-                                        back="/#journals-forum"
-                                        class="mt-0.5 text-xs text-[#9a0002]"
-                                    />
-                                </div>
-                            </div>
+                            <PublicationCard
+                                publication={post}
+                                href="/forum/{post.documentId}?back={encodeURIComponent(
+                                    '/#journals-forum'
+                                )}"
+                                date={post.publishedAt ?? post.createdAt}
+                                bylineBack="/#journals-forum"
+                                {strapiUrl}
+                            />
                         {/each}
                     </div>
                 {:else}
