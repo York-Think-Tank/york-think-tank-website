@@ -1,4 +1,5 @@
 <script lang="ts">
+    import type { Snippet } from 'svelte';
     import ContributorByline from '$lib/components/contributor-byline.svelte';
     import { formatDate } from '$lib/format';
 
@@ -12,6 +13,7 @@
         borderColor = '#9a0002',
         strapiUrl,
         bylineBack = null,
+        coverFallback,
         class: className = ''
     }: {
         publication: any;
@@ -33,6 +35,9 @@
         strapiUrl: string;
         // Where a profile page's back link returns to (e.g. "/#projects")
         bylineBack?: string | null;
+        // Stand-in cover for collections without a cover_image field (journals have
+        // only title/pdf/contributors); receives the publication, ignored otherwise
+        coverFallback?: Snippet<[any]>;
         class?: string;
     } = $props();
 
@@ -61,6 +66,8 @@
                 alt={publication.cover_image.alternativeText ?? publication.title}
                 class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
             />
+        {:else if coverFallback}
+            {@render coverFallback(publication)}
         {/if}
         <!--Only external (PDF) links get the badge; in-app cards are read on the site-->
         {#if external}

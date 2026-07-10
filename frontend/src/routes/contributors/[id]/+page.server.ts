@@ -11,10 +11,14 @@ export async function load({ params, url }) {
     const [contributor, projects, journals, forumPosts] = await Promise.all([
         strapi(`ytt-contributors/${params.id}?populate=photo`),
         strapi(
-            `civitas-policy-projects?${byContributor}&populate[pdf]=true&populate[cover_image]=true&sort=createdAt:desc`
+            `civitas-policy-projects?${byContributor}&populate[pdf]=true&populate[cover_image]=true&populate[contributors]=true&sort=createdAt:desc`
         ),
-        strapi(`civitas-journals?${byContributor}&populate[pdf]=true&sort=createdAt:desc`),
-        strapi(`civitas-forum-posts?${byContributor}&populate[cover_image]=true&sort=createdAt:desc`)
+        strapi(
+            `civitas-journals?${byContributor}&populate[pdf]=true&populate[contributors]=true&sort=createdAt:desc`
+        ),
+        strapi(
+            `civitas-forum-posts?${byContributor}&populate[cover_image]=true&populate[contributors]=true&sort=createdAt:desc`
+        )
     ]);
     if (!contributor) {
         error(404, 'Contributor not found');

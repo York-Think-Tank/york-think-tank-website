@@ -1,23 +1,13 @@
 <script lang="ts">
     import ContributorByline from '$lib/components/contributor-byline.svelte';
     import PublicationCard from '$lib/components/publication-card.svelte';
+    import { dateStamp } from '$lib/format';
 
     let {
         journals = [],
         forumPosts = [],
         strapiUrl
     }: { journals: any[]; forumPosts: any[]; strapiUrl: string } = $props();
-
-    // Day/month/year parts for the journal's date stamp
-    function stamp(iso: string | null) {
-        if (!iso) return null;
-        const d = new Date(iso);
-        return {
-            day: d.getDate(),
-            month: d.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase(),
-            year: d.getFullYear()
-        };
-    }
 </script>
 
 <!--Shared empty state for a column whose collection has nothing published yet-->
@@ -58,7 +48,7 @@
                 {#if journals.length}
                     <div class="border-t border-[#9a0002]">
                         {#each journals.slice(0, 6) as journal, i}
-                            {@const s = stamp(journal.publishedAt ?? journal.createdAt)}
+                            {@const s = dateStamp(journal.publishedAt ?? journal.createdAt)}
                             <!--Title and byline are separate links (a link can't nest in another);
                                 the shared `group` drives the row's hover states-->
                             <div

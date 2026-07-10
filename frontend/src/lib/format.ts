@@ -10,3 +10,14 @@ export function formatDate(iso: string | null | undefined) {
           })
         : null;
 }
+
+/** Day/month/year parts for a calendar-style date stamp, or null when there's no date. */
+export function dateStamp(iso: string | null | undefined) {
+    if (!iso) return null;
+    const d = new Date(iso);
+    return {
+        day: d.getDate(),
+        month: d.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase(),
+        year: d.getFullYear()
+    };
+}
