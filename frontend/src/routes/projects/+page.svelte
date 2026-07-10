@@ -24,6 +24,7 @@
                 href="{data.strapiUrl}{project.pdf?.url}"
                 external
                 date={project.publishedAt ?? project.createdAt}
+                borderColor="#febd59"
                 strapiUrl={data.strapiUrl}
                 class="w-[calc((100%-1rem)/2)] md:w-[calc((100%-3rem)/3)]"
             />

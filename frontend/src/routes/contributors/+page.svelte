@@ -1,5 +1,6 @@
 <script lang="ts">
     import SearchPage from '$lib/components/search-page.svelte';
+    import { formatDate } from '$lib/format';
 
     let { data } = $props();
 
@@ -19,9 +20,10 @@
 >
     {#snippet results()}
         {#each contributors as contributor}
+            <!--Gold-outlined card, matching the publication cards on the other search pages-->
             <a
                 href="/contributors/{contributor.documentId}"
-                class="group flex flex-col items-center text-center gap-2 w-[calc((100%-2rem)/3)] md:w-[calc((100%-4.5rem)/4)]"
+                class="group flex flex-col items-center text-center gap-2 rounded-lg border-4 border-[#febd59] hover:border-[#ffc9c2] transition p-4 w-[calc((100%-2rem)/3)] md:w-[calc((100%-4.5rem)/4)]"
             >
                 <div class="w-full max-w-32 aspect-square rounded-full overflow-hidden border-4 border-[#febd59] group-hover:border-[#ffc9c2] transition bg-[#febd59]">
                     {#if contributor.photo}
@@ -44,6 +46,12 @@
                 {#if contributor.current_or_past_committee === 'Current' && contributor.current_committee_position}
                     <p class="text-base font-black text-[#febd59]">
                         {contributor.current_committee_position}
+                    </p>
+                {/if}
+                <!--Join date: the entry's createdAt, i.e. when they were added to the CMS-->
+                {#if contributor.createdAt}
+                    <p class="text-xs md:text-sm text-[#faf8f0]/60">
+                        Joined {formatDate(contributor.createdAt)}
                     </p>
                 {/if}
             </a>

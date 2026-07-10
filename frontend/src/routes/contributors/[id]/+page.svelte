@@ -1,6 +1,7 @@
 <script lang="ts">
     import { afterNavigate } from '$app/navigation';
     import PublicationCard from '$lib/components/publication-card.svelte';
+    import JournalCover from '$lib/components/journal-cover.svelte';
 
     let { data } = $props();
 
@@ -109,18 +110,8 @@
     <title>{contributor.name} at York Think Tank</title>
 </svelte:head>
 
-<!--Stand-in cover for journals (they have no cover_image field): the shared journal
-    artwork, hover-zoomed like the real cover images-->
 {#snippet journalCover(journal: any)}
-    <!--The artwork is a wide banner: object-contain shows all of it, letterboxed on a
-        burgundy field that matches its own background instead of cropping it to 4:3-->
-    <div class="w-full h-full bg-[#9a0002] flex items-center justify-center">
-        <img
-            src="/images/journal.avif"
-            alt="Civitas Journal cover for {journal.title}"
-            class="w-full h-full object-contain group-hover:scale-105 transition duration-300"
-        />
-    </div>
+    <JournalCover {journal} />
 {/snippet}
 
 <!--min-h-dvh + burgundy on the outermost element = uniform colour, no white band-->
