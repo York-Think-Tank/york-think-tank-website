@@ -143,11 +143,15 @@
                 class="relative mt-10 md:mt-12 flex flex-col md:flex-row items-center md:items-start gap-8 md:gap-12"
             >
                 <!--Ghost initial watermark: anchored to the hero row (below the top bar,
-                    so it can't collide with the search field) and centered on it. First
-                    child, so the portrait and text paint over it-->
+                    so it can't collide with the search field). On mobile it sits in the
+                    gap left of the centered portrait: sized in vw so it never reaches
+                    the portrait on any phone width, and top-20 centers it on the w-40
+                    portrait's vertical middle. From md the row is left-aligned and the
+                    letter moves to the empty right side, vertically centered on the row.
+                    First child, so the portrait and text paint over it-->
                 <span
                     aria-hidden="true"
-                    class="absolute right-0 top-1/2 -translate-y-1/2 text-[10rem] md:text-[18rem] font-black leading-none text-[#9a0002]/[0.08] select-none pointer-events-none"
+                    class="absolute left-0 top-20 -translate-y-1/2 md:left-auto md:right-0 md:top-1/2 text-[18vw] md:text-[18rem] font-black leading-none text-[#9a0002]/[0.08] select-none pointer-events-none"
                 >
                     {contributor.name?.trim()?.[0] ?? 'Y'}
                 </span>
