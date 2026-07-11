@@ -118,7 +118,7 @@
 <div class="min-h-dvh bg-[#9a0002] flex flex-col">
     <!--Editorial masthead: cream band with oversized name typography, a giant ghost
         initial behind, and the portrait offset over a solid gold disc-->
-    <header class="relative overflow-hidden bg-[#faf8f0] px-6 md:px-8 pt-6 md:pt-8 pb-10 md:pb-14">
+    <header class="relative overflow-hidden bg-[#e8eef5] px-6 md:px-8 pt-6 md:pt-8 pb-10 md:pb-14">
         <div class="max-w-5xl mx-auto">
             <!--Top bar: back link + contributor search, burgundy-on-cream-->
             <div class="flex flex-wrap items-center justify-between gap-4">

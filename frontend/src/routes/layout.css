@@ -1,3 +1,10 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
+
+/* Site white behind everything, so rubber-band overscroll past the page edges
+   shows the same colour as the light sections */
+html,
+body {
+    background-color: #e8eef5;
+}
