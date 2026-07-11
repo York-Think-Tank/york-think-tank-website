@@ -5,6 +5,7 @@
     import Projects from '$lib/sections/projects.svelte';
     import JournalsForums from '$lib/sections/journals-forums.svelte';
     import Events from '$lib/sections/events.svelte';
+    import Contact from '$lib/sections/contact.svelte';
 
     let { data } = $props();
 </script>
@@ -19,3 +20,4 @@
     strapiUrl={data.strapiUrl}
 />
 <Events events={data.events} strapiUrl={data.strapiUrl} />
+<Contact data={data.contactSection} />
