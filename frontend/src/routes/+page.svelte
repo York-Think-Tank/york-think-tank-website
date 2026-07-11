@@ -18,4 +18,4 @@
     forumPosts={data.forumPosts}
     strapiUrl={data.strapiUrl}
 />
-<Events />
+<Events events={data.events} strapiUrl={data.strapiUrl} />
