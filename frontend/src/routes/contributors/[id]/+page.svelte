@@ -294,8 +294,11 @@
                                 {strapiUrl}
                                 class="h-full"
                             />
+                            <!--Decorative label, not a control: pointer-events-none lets
+                                clicks fall through to the card link beneath, and the squarer
+                                corners stop it looking like the round filter buttons-->
                             <span
-                                class="absolute -top-3 left-3 z-10 text-[10px] md:text-xs font-black uppercase tracking-widest text-[#febd59] bg-[#9a0002] border-2 border-[#febd59] rounded-full px-2.5 py-0.5"
+                                class="absolute -top-3 left-3 z-10 pointer-events-none text-[10px] md:text-xs font-black uppercase tracking-widest text-[#febd59] bg-[#9a0002] border-2 border-[#febd59] rounded px-2.5 py-0.5"
                             >
                                 {entry.kind}
                             </span>
