@@ -6,16 +6,16 @@
 
 <!--Civitas Policy Projects: same burgundy + gold scheme as the About Us section.
     Shows the newest 6; the button links to the full searchable /projects page-->
-<section id="projects" class="bg-[#9a0002] p-8">
+<section id="projects" class="bg-[#9a0002] p-8 min-h-[60vh] flex flex-col justify-center">
     <!--Section title, with a quiet link through to the full searchable projects page,
         mirroring the committee section's contributor link-->
-    <h2 class="text-3xl md:text-4xl font-black text-[#febd59] text-center mb-2">
+    <h2 class="text-3xl md:text-5xl font-black text-[#febd59] text-center mb-2">
         CIVITAS POLICY PROJECTS
     </h2>
     <p class="text-center mb-8">
         <a
             href="/projects"
-            class="text-base md:text-lg font-black text-[#febd59] underline decoration-[#febd59]/40 decoration-2 underline-offset-4 hover:decoration-[#febd59] transition"
+            class="text-base md:text-xl font-black text-[#febd59] underline decoration-[#febd59]/40 decoration-2 underline-offset-4 hover:decoration-[#febd59] transition"
         >
             see all our projects →
         </a>
@@ -39,7 +39,7 @@
             {/each}
         </div>
     {:else}
-        <p class="text-base md:text-lg text-[#faf8f0]/70 text-center">
+        <p class="text-base md:text-xl text-[#faf8f0]/70 text-center">
             Our policy projects are coming soon.
         </p>
     {/if}

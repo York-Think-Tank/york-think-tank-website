@@ -2,15 +2,15 @@
     let { members = [], strapiUrl }: { members: any[]; strapiUrl: string } = $props();
 </script>
 
-<section id="committee" class="bg-[#e8eef5] p-8">
+<section id="committee" class="bg-[#e8eef5] p-8 min-h-[60vh] flex flex-col justify-center">
     <!--Committee title, with a quiet link through to the full contributor search page-->
-    <h2 class="text-3xl md:text-4xl font-black text-[#9a0002] text-center mb-2">
+    <h2 class="text-3xl md:text-5xl font-black text-[#9a0002] text-center mb-2">
         OUR COMMITTEE
     </h2>
     <p class="text-center mb-8">
         <a
             href="/contributors"
-            class="text-base md:text-lg font-black text-[#9a0002] underline decoration-[#9a0002]/40 decoration-2 underline-offset-4 hover:decoration-[#9a0002] transition"
+            class="text-base md:text-xl font-black text-[#9a0002] underline decoration-[#9a0002]/40 decoration-2 underline-offset-4 hover:decoration-[#9a0002] transition"
         >
             and our other contributors →
         </a>
@@ -47,7 +47,7 @@
                         />
                     {/if}
                 </div>
-                <p class="text-base md:text-lg text-[#030200] underline decoration-[#9a0002]/40 decoration-2 underline-offset-4 group-hover:decoration-[#9a0002] transition">
+                <p class="text-base md:text-xl text-[#030200] underline decoration-[#9a0002]/40 decoration-2 underline-offset-4 group-hover:decoration-[#9a0002] transition">
                     {member.name}
                 </p>
             </a>

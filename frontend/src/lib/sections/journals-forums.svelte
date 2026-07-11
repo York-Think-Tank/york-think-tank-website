@@ -14,15 +14,18 @@
 {#snippet emptyState(icon: string, title: string, sub: string)}
     <div class="grow flex flex-col items-center justify-center text-center py-10">
         <span aria-hidden="true" class="text-4xl md:text-5xl">{icon}</span>
-        <p class="mt-3 text-base md:text-lg font-black text-[#9a0002]">{title}</p>
+        <p class="mt-3 text-base md:text-xl font-black text-[#9a0002]">{title}</p>
         <p class="mt-1 text-sm text-[#030200]/50">{sub}</p>
     </div>
 {/snippet}
 
 <!--Civitas Journals & Forum section-->
-<section id="journals-forum" class="bg-[#faf8f0] px-6 py-12 md:px-8 md:py-16">
+<section
+    id="journals-forum"
+    class="bg-[#e8eef5] px-6 py-12 md:px-8 md:py-16 min-h-[60vh] flex flex-col justify-center"
+>
     <div class="w-full md:w-[85vw] mx-auto">
-        <h2 class="text-3xl md:text-4xl font-black text-[#9a0002] text-center">
+        <h2 class="text-3xl md:text-5xl font-black text-[#9a0002] text-center">
             CIVITAS JOURNALS & FORUM
         </h2>
         <div class="w-16 h-1 rounded bg-[#febd59] mx-auto mt-3 mb-10 md:mb-14"></div>
@@ -34,13 +37,13 @@
             <div
                 class="flex flex-col min-w-0 bg-white rounded-lg shadow-md border-t-8 border-[#9a0002] p-6 md:p-8"
             >
-                <h3 class="text-2xl md:text-3xl font-black text-[#9a0002]">
+                <h3 class="text-2xl md:text-4xl font-black text-[#9a0002]">
                     Civitas Journals
                 </h3>
                 <p class="mt-1 mb-6">
                     <a
                         href="/journals"
-                        class="text-base md:text-lg font-black text-[#9a0002] underline decoration-[#9a0002] decoration-2 underline-offset-4 hover:decoration-transparent transition"
+                        class="text-base md:text-xl font-black text-[#9a0002] underline decoration-[#9a0002] decoration-2 underline-offset-4 hover:decoration-transparent transition"
                     >
                         all volumes →
                     </a>
@@ -92,7 +95,7 @@
                                         class="block"
                                     >
                                         <p
-                                            class="text-base md:text-xl font-black text-[#9a0002] leading-tight underline decoration-transparent decoration-2 underline-offset-4 group-hover:decoration-[#9a0002] transition truncate"
+                                            class="text-base md:text-2xl font-black text-[#9a0002] leading-tight underline decoration-transparent decoration-2 underline-offset-4 group-hover:decoration-[#9a0002] transition truncate"
                                         >
                                             {journal.title}
                                         </p>
@@ -128,13 +131,13 @@
             <div
                 class="flex flex-col min-w-0 bg-white rounded-lg shadow-md border-t-8 border-[#febd59] p-6 md:p-8"
             >
-                <h3 class="text-2xl md:text-3xl font-black text-[#9a0002]">
+                <h3 class="text-2xl md:text-4xl font-black text-[#9a0002]">
                     Civitas Forum
                 </h3>
                 <p class="mt-1 mb-6">
                     <a
                         href="/forum"
-                        class="text-base md:text-lg font-black text-[#9a0002] underline decoration-[#9a0002] decoration-2 underline-offset-4 hover:decoration-transparent transition"
+                        class="text-base md:text-xl font-black text-[#9a0002] underline decoration-[#9a0002] decoration-2 underline-offset-4 hover:decoration-transparent transition"
                     >
                         all posts →
                     </a>

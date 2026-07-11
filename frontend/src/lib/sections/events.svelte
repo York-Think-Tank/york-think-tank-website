@@ -12,7 +12,7 @@
 {#snippet group(label: string, list: any[])}
     {#if list.length}
         <div>
-            <h3 class="text-2xl md:text-3xl font-black text-[#febd59]">{label}</h3>
+            <h3 class="text-2xl md:text-4xl font-black text-[#febd59]">{label}</h3>
             <div class="w-16 h-1 rounded bg-[#febd59] mt-2 mb-4"></div>
             <!--Same card widths as the Civitas Policy Projects grid; up to four per
                 group, one full row at xl-->
@@ -32,12 +32,12 @@
 
 <!--Our Events: the concept mockup's Upcoming/Previous split, recoloured onto the
     site's burgundy + gold scheme (same as the Projects section)-->
-<section id="events" class="bg-[#9a0002] px-8 py-6">
-    <h2 class="text-3xl md:text-4xl font-black text-[#febd59] text-center mb-2">OUR EVENTS</h2>
+<section id="events" class="bg-[#9a0002] px-8 py-6 min-h-[60vh] flex flex-col justify-center">
+    <h2 class="text-3xl md:text-5xl font-black text-[#febd59] text-center mb-2">OUR EVENTS</h2>
     <p class="text-center mb-6">
         <a
             href="/events"
-            class="text-base md:text-lg font-black text-[#febd59] underline decoration-[#febd59]/40 decoration-2 underline-offset-4 hover:decoration-[#febd59] transition"
+            class="text-base md:text-xl font-black text-[#febd59] underline decoration-[#febd59]/40 decoration-2 underline-offset-4 hover:decoration-[#febd59] transition"
         >
             see all our events →
         </a>
@@ -49,7 +49,7 @@
             {@render group('Previous', split.previous)}
         </div>
     {:else}
-        <p class="text-base md:text-lg text-[#faf8f0]/70 text-center">
+        <p class="text-base md:text-xl text-[#faf8f0]/70 text-center">
             Our events are coming soon.
         </p>
     {/if}
