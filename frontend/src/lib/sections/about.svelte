@@ -1,9 +1,10 @@
 <script lang="ts">
     let { data, strapiUrl }: { data: any; strapiUrl: string } = $props();
 
-    const images = $derived(data.about_images);
-    const aboutParagraphs = $derived(data.about);
-    const missionItems = $derived(data.mission[0].children);
+    // Section always renders; without a CMS entry it shows just the headings
+    const images = $derived(data?.about_images ?? []);
+    const aboutParagraphs = $derived(data?.about ?? []);
+    const missionItems = $derived(data?.mission?.[0]?.children ?? []);
 </script>
 
 <section class="bg-[#9a0002] p-8 min-h-[60vh] flex flex-col justify-center">
