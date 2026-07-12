@@ -27,6 +27,8 @@ services:
     restart: unless-stopped
     environment:
       STRAPI_URL: ${STRAPI_URL}
+      # API fetches go straight over the Docker network, not out through Cloudflare
+      STRAPI_INTERNAL_URL: http://strapi:1337
       STRAPI_READ_API_KEY: ${STRAPI_READ_API_KEY}
       # adapter-node uses this for request origin checks behind the proxy
       ORIGIN: https://${SITE_DOMAIN}
