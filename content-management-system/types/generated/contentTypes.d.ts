@@ -440,6 +440,246 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiAboutSectionAboutSection extends Struct.SingleTypeSchema {
+  collectionName: 'about_pages';
+  info: {
+    displayName: 'About Section';
+    pluralName: 'about-sections';
+    singularName: 'about-section';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    about: Schema.Attribute.Blocks & Schema.Attribute.Required;
+    about_images: Schema.Attribute.Media<'images', true> &
+      Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::about-section.about-section'
+    > &
+      Schema.Attribute.Private;
+    mission: Schema.Attribute.Blocks & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiCivitasForumPostCivitasForumPost
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'civitas_forum_posts';
+  info: {
+    displayName: 'Civitas Forum Post';
+    pluralName: 'civitas-forum-posts';
+    singularName: 'civitas-forum-post';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    content: Schema.Attribute.Blocks & Schema.Attribute.Required;
+    contributors: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::ytt-contributor.ytt-contributor'
+    >;
+    cover_image: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::civitas-forum-post.civitas-forum-post'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiCivitasJournalCivitasJournal
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'civitas_journals';
+  info: {
+    displayName: 'Civitas Journal';
+    pluralName: 'civitas-journals';
+    singularName: 'civitas-journal';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    contributors: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::ytt-contributor.ytt-contributor'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::civitas-journal.civitas-journal'
+    > &
+      Schema.Attribute.Private;
+    pdf: Schema.Attribute.Media<'files'> & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiCivitasPolicyProjectCivitasPolicyProject
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'civitas_policy_projects';
+  info: {
+    displayName: 'Civitas Policy Project';
+    pluralName: 'civitas-policy-projects';
+    singularName: 'civitas-policy-project';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    contributors: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::ytt-contributor.ytt-contributor'
+    >;
+    cover_image: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::civitas-policy-project.civitas-policy-project'
+    > &
+      Schema.Attribute.Private;
+    pdf: Schema.Attribute.Media<'files'> & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiContactSectionContactSection
+  extends Struct.SingleTypeSchema {
+  collectionName: 'contact_sections';
+  info: {
+    displayName: 'Contact Section';
+    pluralName: 'contact-sections';
+    singularName: 'contact-section';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    disclaimer_url: Schema.Attribute.String;
+    email: Schema.Attribute.Email & Schema.Attribute.Required;
+    instagram_url: Schema.Attribute.String;
+    linkedin_url: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::contact-section.contact-section'
+    > &
+      Schema.Attribute.Private;
+    membership_url: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    terms_url: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    whatsapp_url: Schema.Attribute.String;
+    youtube_url: Schema.Attribute.String;
+  };
+}
+
+export interface ApiYttContributorYttContributor
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'ytt_members';
+  info: {
+    displayName: 'YTT Contributor';
+    pluralName: 'ytt-contributors';
+    singularName: 'ytt-contributor';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    bio: Schema.Attribute.Blocks;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    current_committee_position: Schema.Attribute.String;
+    current_or_past_committee: Schema.Attribute.Enumeration<
+      ['Current', 'Past']
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::ytt-contributor.ytt-contributor'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    past_comittee_position: Schema.Attribute.String;
+    photo: Schema.Attribute.Media<'images'>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiYttEventYttEvent extends Struct.CollectionTypeSchema {
+  collectionName: 'ytt_events';
+  info: {
+    displayName: 'YTT Event';
+    pluralName: 'ytt-events';
+    singularName: 'ytt-event';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    cover_image: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text & Schema.Attribute.Required;
+    event_date: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::ytt-event.ytt-event'
+    > &
+      Schema.Attribute.Private;
+    location: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    signup_link: Schema.Attribute.String;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface PluginContentReleasesRelease
   extends Struct.CollectionTypeSchema {
   collectionName: 'strapi_releases';
@@ -951,6 +1191,13 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::about-section.about-section': ApiAboutSectionAboutSection;
+      'api::civitas-forum-post.civitas-forum-post': ApiCivitasForumPostCivitasForumPost;
+      'api::civitas-journal.civitas-journal': ApiCivitasJournalCivitasJournal;
+      'api::civitas-policy-project.civitas-policy-project': ApiCivitasPolicyProjectCivitasPolicyProject;
+      'api::contact-section.contact-section': ApiContactSectionContactSection;
+      'api::ytt-contributor.ytt-contributor': ApiYttContributorYttContributor;
+      'api::ytt-event.ytt-event': ApiYttEventYttEvent;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

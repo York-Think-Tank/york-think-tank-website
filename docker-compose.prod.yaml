@@ -1,0 +1,77 @@
+# Production stack. Copy this file, nginx/, and a filled-in .env (see
+# .env.example, "Production" section) to the server, then:
+#   docker compose -f docker-compose.prod.yaml pull
+#   docker compose -f docker-compose.prod.yaml up -d
+services:
+  nginx:
+    container_name: nginx
+    image: nginx:1.29-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    environment:
+      SITE_DOMAIN: ${SITE_DOMAIN}
+      CMS_DOMAIN: ${CMS_DOMAIN}
+    volumes:
+      # The official image runs envsubst on *.template into /etc/nginx/conf.d
+      - ./nginx/templates:/etc/nginx/templates:ro
+    depends_on:
+      - frontend
+      - strapi
+    networks:
+      - web
+
+  frontend:
+    container_name: frontend
+    image: ghcr.io/york-think-tank/ytt-frontend:latest
+    restart: unless-stopped
+    environment:
+      STRAPI_URL: ${STRAPI_URL}
+      STRAPI_READ_API_KEY: ${STRAPI_READ_API_KEY}
+      # adapter-node uses this for request origin checks behind the proxy
+      ORIGIN: https://${SITE_DOMAIN}
+    networks:
+      - web
+
+  strapi:
+    container_name: strapi
+    image: ghcr.io/york-think-tank/ytt-strapi:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_HOST: strapiDB
+      IS_PROXIED: "true"
+    volumes:
+      - strapi-uploads:/opt/app/public/uploads
+    networks:
+      - web
+      - strapi
+    depends_on:
+      strapiDB:
+        condition: service_healthy
+
+  strapiDB:
+    container_name: strapiDB
+    restart: unless-stopped
+    image: postgres:18.4-alpine3.23
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+    volumes:
+      - strapi-data:/var/lib/postgresql
+    networks:
+      - strapi
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME} -d ${DATABASE_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  strapi-data:
+  strapi-uploads:
+
+networks:
+  web:
+  strapi:

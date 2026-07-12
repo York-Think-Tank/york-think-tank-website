@@ -1,0 +1,48 @@
+# Rendered by the nginx image's envsubst on startup; ${SITE_DOMAIN} and
+# ${CMS_DOMAIN} come from the .env via docker-compose.prod.yaml.
+#
+# TLS is expected to be terminated in front of this (e.g. Cloudflare proxied
+# DNS, or host-level certbot forwarding to :80). If you later want nginx
+# itself to hold certificates, add a 443 server block per domain and mount
+# the certs into the container.
+
+server {
+    listen 80;
+    server_name ${SITE_DOMAIN};
+
+    location / {
+        proxy_pass http://frontend:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+    }
+}
+
+server {
+    listen 80;
+    server_name ${CMS_DOMAIN};
+
+    # Room for journal/project PDF uploads in the admin
+    client_max_body_size 100m;
+
+    location / {
+        proxy_pass http://strapi:1337;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+    }
+
+    # Long cache for uploaded media (filenames are content-hashed by Strapi)
+    location /uploads/ {
+        proxy_pass http://strapi:1337;
+        proxy_set_header Host $host;
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+    }
+}
