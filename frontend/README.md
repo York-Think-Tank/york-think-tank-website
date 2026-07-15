@@ -1,42 +1,33 @@
-# sv
+# Frontend
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+The public site. SvelteKit with Svelte 5 (runes), Tailwind 4, TypeScript. Pages are server side rendered and pull their content from Strapi on each request.
 
-## Creating a project
+## Development
 
-If you're seeing this, you've probably already done this step. Congrats!
+You need the Strapi dev stack running first (`docker compose up` in the repo root) and a filled in `.env` in the repo root. Vite is pointed at the root `.env`, this folder doesn't have its own.
 
-```sh
-# create a new project
-npx sv create my-app
-```
-
-To recreate this project with the same configuration:
-
-```sh
-# recreate this project
-npx sv@0.16.1 create --template minimal --types ts --add prettier tailwindcss="plugins:typography,forms" eslint --install npm .
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
+```bash
+npm install
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+Site is on `http://localhost:5173`. `npm run check` and `npm run lint` before committing.
 
-To create a production version of your app:
+## How data loading works
 
-```sh
-npm run build
-```
+All Strapi access goes through [src/lib/server/strapi.ts](src/lib/server/strapi.ts). It reads three env vars at runtime, not build time, so the production Docker image stays generic:
 
-You can preview the production build with `npm run preview`.
+- `STRAPI_URL` - public base URL, used for media and PDF links rendered into pages
+- `STRAPI_INTERNAL_URL` - optional, where API fetches actually go. Set in production to `http://strapi:1337` so traffic stays on the Docker network. Falls back to `STRAPI_URL` in dev
+- `STRAPI_READ_API_KEY` - read-only token from the Strapi admin
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+`+page.server.ts` load functions call `strapi('endpoint?...')` and hand results to section components.
+
+## Conventions
+
+- Section components always render, even with no CMS data. Use fallbacks (`?? []`, optional chaining) instead of gating whole sections behind `{#if data}`. A fresh deploy has an empty CMS and the site still has to look presentable.
+- Layout note: the sections are `flex flex-col`, and a child with `mx-auto` inside one shrinks to fit its content instead of stretching. Content containers need `w-full max-w-6xl mx-auto`, not just the last two.
+
+## Production build
+
+Uses adapter-node. `npm run build` produces a standalone server in `build/`, run with `node build` on port 3000. The [Dockerfile](Dockerfile) does exactly that in two stages and is built by GitHub Actions on version tags. See [infrastructure.md](../infrastructure.md) for deployment.

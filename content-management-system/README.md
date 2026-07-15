@@ -1,61 +1,33 @@
-# 🚀 Getting started with Strapi
+# Content management system
 
-Strapi comes with a full featured [Command Line Interface](https://docs.strapi.io/dev-docs/cli) (CLI) which lets you scaffold and manage your project in seconds.
+Strapi 5 app that backs the site. Editors log in at `/admin` to write and publish content, the frontend reads it over the REST API with a read-only token.
 
-### `develop`
+## Content types
 
-Start your Strapi application with autoReload enabled. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-develop)
+- `ytt-contributor` - committee members and other contributors, one flat type
+- `ytt-event` - events
+- `civitas-journal`, `civitas-forum-post`, `civitas-policy-project` - the publications
+- `about-section`, `contact-section` - single types for the homepage sections
 
-```
-npm run develop
-# or
-yarn develop
-```
+## Development
 
-### `start`
+Run `docker compose up` from the repo root, not from this folder. That starts Strapi in develop mode with this folder's `config/` and `src/` bind mounted, plus a Postgres container. The admin is at `http://localhost:1337/admin`.
 
-Start your Strapi application with autoReload disabled. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-start)
+Schema edits made through the admin's content-type builder land in `src/api/`, commit them. Two gotchas:
 
-```
-npm run start
-# or
-yarn start
-```
+- Adding a whole new api folder sometimes needs a `docker restart strapi` before Strapi picks it up.
+- After any schema change, regenerate the TypeScript types and commit them, because the production image build type checks against `types/generated/` and fails if they're stale:
 
-### `build`
-
-Build your admin panel. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-build)
-
-```
-npm run build
-# or
-yarn build
+```bash
+docker exec strapi sh -c "cd /opt/app && npm run strapi ts:generate-types"
+docker cp strapi:/opt/app/types/generated/. content-management-system/types/generated/
 ```
 
-## ⚙️ Deployment
+## Production
 
-Strapi gives you many possible deployment options for your project including [Strapi Cloud](https://cloud.strapi.io). Browse the [deployment section of the documentation](https://docs.strapi.io/dev-docs/deployment) to find the best solution for your use case.
+The production image is built from [Dockerfile.prod](Dockerfile.prod) by GitHub Actions, not the dev [Dockerfile](Dockerfile). It compiles the admin panel, prunes dev dependencies and runs `strapi start`. Uploaded media lives in a Docker volume mounted at `public/uploads`. See [infrastructure.md](../infrastructure.md) in the repo root for the whole picture.
 
-```
-yarn strapi deploy
-```
+## Useful Strapi docs
 
-## 📚 Learn more
-
-- [Resource center](https://strapi.io/resource-center) - Strapi resource center.
-- [Strapi documentation](https://docs.strapi.io) - Official Strapi documentation.
-- [Strapi tutorials](https://strapi.io/tutorials) - List of tutorials made by the core team and the community.
-- [Strapi blog](https://strapi.io/blog) - Official Strapi blog containing articles made by the Strapi team and the community.
-- [Changelog](https://strapi.io/changelog) - Find out about the Strapi product updates, new features and general improvements.
-
-Feel free to check out the [Strapi GitHub repository](https://github.com/strapi/strapi). Your feedback and contributions are welcome!
-
-## ✨ Community
-
-- [Discord](https://discord.strapi.io) - Come chat with the Strapi community including the core team.
-- [Forum](https://forum.strapi.io/) - Place to discuss, ask questions and find answers, show your Strapi project and get feedback or just talk with other Community members.
-- [Awesome Strapi](https://github.com/strapi/awesome-strapi) - A curated list of awesome things related to Strapi.
-
----
-
-<sub>🤫 Psst! [Strapi is hiring](https://strapi.io/careers).</sub>
+- [CLI reference](https://docs.strapi.io/dev-docs/cli)
+- [Official documentation](https://docs.strapi.io)
