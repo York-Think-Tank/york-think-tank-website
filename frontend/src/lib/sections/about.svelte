@@ -14,7 +14,7 @@
     </h2>
     <!--About us text section-->
     <!--mx-auto to center the div-->
-    <div class="text-base md:text-xl text-[#faf8f0] mb-6 max-w-6xl mx-auto">
+    <div class="text-base md:text-xl text-[#faf8f0] mb-6 w-full max-w-6xl mx-auto">
         {#each aboutParagraphs as paragraph}
             <p class="mb-4">
                 {paragraph.children[0].text}
@@ -36,7 +36,7 @@
     </div>
 
     <!--About us images-->
-    <div class="flex gap-3 max-w-6xl mx-auto">
+    <div class="flex gap-3 w-full max-w-6xl mx-auto">
         {#each images as image}
             <!--Use a flex container and each image becomes flex item, remove overflow that is not in the 4/3 aspect ratio-->
             <div class="aspect-[4/3] flex-1 overflow-hidden rounded">

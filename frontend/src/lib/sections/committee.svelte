@@ -18,15 +18,19 @@
 
     <!--Member cards: 3 across on mobile, 4 across on desktop.
         Flex + justify-center (not grid) so a short last row centers instead of left-aligning;
-        card widths are computed from the row's gap total so full rows still fill exactly-->
-    <div class="flex flex-wrap justify-center gap-x-4 md:gap-x-6 gap-y-10 max-w-6xl mx-auto">
+        cards are exact 1/3 / 1/4 fractions with the gutter as internal padding, so their
+        size never depends on how many members there are-->
+    <!--w-full matters: inside the section's flex-col, mx-auto alone makes this div
+        shrink-to-fit its content, and the percentage card widths then track member
+        count instead of the page-->
+    <div class="flex flex-wrap justify-center gap-y-10 w-full max-w-6xl mx-auto">
         {#each members as member}
             <!--Whole card links to the member page (documentId is Strapi's unique entry id);
                 underline is the persistent clickable cue,
                 border flips burgundy->gold on hover for desktop feedback-->
             <a
                 href="/contributors/{member.documentId}?back=/%23committee"
-                class="group flex flex-col items-center text-center gap-3 w-[calc((100%-2rem)/3)] md:w-[calc((100%-4.5rem)/4)]"
+                class="group flex flex-col items-center text-center gap-3 w-1/3 md:w-1/4 px-2 md:px-3"
             >
                 <h3 class="text-base md:text-2xl font-black text-[#9a0002] leading-tight">
                     {member.current_committee_position ?? 'Committee Member'}
