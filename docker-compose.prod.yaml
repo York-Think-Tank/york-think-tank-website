@@ -70,6 +70,34 @@ services:
       timeout: 5s
       retries: 5
 
+  # Nightly encrypted backups to Backblaze B2, see ops/backup/README.md
+  backup:
+    container_name: backup
+    image: ghcr.io/york-think-tank/ytt-backup:latest
+    restart: unless-stopped
+    # restic tracks snapshots per host, so keep it stable across container recreates
+    hostname: ytt-backup
+    environment:
+      RESTIC_REPOSITORY: ${BACKUP_REPOSITORY:-}
+      RESTIC_PASSWORD: ${BACKUP_PASSWORD:-}
+      AWS_ACCESS_KEY_ID: ${BACKUP_B2_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${BACKUP_B2_APPLICATION_KEY:-}
+      HEALTHCHECK_URL: ${BACKUP_HEALTHCHECK_URL:-}
+      CHECK_HEALTHCHECK_URL: ${BACKUP_CHECK_HEALTHCHECK_URL:-}
+      PGHOST: strapiDB
+      PGUSER: ${DATABASE_USERNAME}
+      PGPASSWORD: ${DATABASE_PASSWORD}
+      PGDATABASE: ${DATABASE_NAME}
+    volumes:
+      - strapi-uploads:/data/uploads:ro
+      # The directory rather than the file, so an editor replacing .env is still seen
+      - .:/data/srv:ro
+    networks:
+      - strapi
+    depends_on:
+      strapiDB:
+        condition: service_healthy
+
 volumes:
   strapi-data:
   strapi-uploads:

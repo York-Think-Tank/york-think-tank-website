@@ -1,0 +1,3 @@
+# Times are UTC. The weekly check sits well clear of the nightly run.
+0 3 * * * /usr/local/bin/backup.sh
+0 6 * * 0 /usr/local/bin/check.sh

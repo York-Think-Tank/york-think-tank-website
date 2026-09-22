@@ -1,4 +1,4 @@
-# Builds and pushes both production images to GHCR when a version tag is
+# Builds and pushes the production images to GHCR when a version tag is
 # pushed, e.g.:
 #   git tag v1.0.0 && git push origin v1.0.0
 # No secrets or env vars are baked into the images; everything is injected
@@ -25,6 +25,9 @@ jobs:
           - name: strapi
             context: ./content-management-system
             dockerfile: ./content-management-system/Dockerfile.prod
+          - name: backup
+            context: ./ops/backup
+            dockerfile: ./ops/backup/Dockerfile
     steps:
       - uses: actions/checkout@v4
 
