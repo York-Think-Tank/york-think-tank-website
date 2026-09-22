@@ -8,6 +8,7 @@ Website for the York Think Tank. Strapi for the content management system (CMS)/
 - [content-management-system/](content-management-system/) - the Strapi app, see its [README](content-management-system/README.md)
 - [docker-compose.yaml](docker-compose.yaml) - development stack (Strapi + Postgres)
 - [docker-compose.prod.yaml](docker-compose.prod.yaml) and [nginx/](nginx/) - production stack
+- [ops/backup/](ops/backup/) - nightly backups to Backblaze B2, and how to restore them
 - [infrastructure.md](infrastructure.md) - how production is built, shipped and hosted
 
 ## Why Strapi

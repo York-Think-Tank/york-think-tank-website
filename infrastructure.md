@@ -4,7 +4,7 @@ How the site is built, shipped and hosted. The root README covers local developm
 
 ## The short version
 
-Everything runs on one small VPS with Docker Compose: four containers (nginx, the SvelteKit frontend, Strapi and Postgres). Cloudflare sits in front of the box and handles TLS and DNS. Images are built by GitHub Actions when we push a version tag, and the server just pulls them from GHCR.
+Everything runs on one small VPS with Docker Compose: five containers (nginx, the SvelteKit frontend, Strapi, Postgres and a nightly backup job). Cloudflare sits in front of the box and handles TLS and DNS. Images are built by GitHub Actions when we push a version tag, and the server just pulls them from GHCR.
 
 ```
 internet
@@ -28,6 +28,7 @@ nginx is the only container with a published port. It routes purely on the Host 
 | frontend | ghcr.io/york-think-tank/ytt-frontend    | server side rendered SvelteKit site |
 | strapi   | ghcr.io/york-think-tank/ytt-strapi      | CMS admin panel + REST API + uploaded media |
 | strapiDB | postgres:alpine (stock)                 | database for Strapi |
+| backup   | ghcr.io/york-think-tank/ytt-backup      | nightly encrypted backups to Backblaze B2 |
 
 The nginx config is a template ([nginx/templates/default.conf.template](nginx/templates/default.conf.template)). The official image runs envsubst on it at startup, so the hostnames come from the server's `.env` rather than being hardcoded. It also raises the upload limit for the CMS (journal and project PDFs) and sets long cache headers on `/uploads/`.
 
@@ -35,7 +36,7 @@ One detail worth knowing: the frontend does not fetch CMS data through the publi
 
 ## Images and CI
 
-Pushing a tag like `v1.2.3` triggers [the workflow](.github/workflows/build-production-images.yaml). It builds both images and pushes them to GHCR tagged `:latest` and `:v1.2.3`.
+Pushing a tag like `v1.2.3` triggers [the workflow](.github/workflows/build-production-images.yaml). It builds the frontend, Strapi and backup images and pushes them to GHCR tagged `:latest` and `:v1.2.3`.
 
 - The frontend image ([frontend/Dockerfile](frontend/Dockerfile)) is a two stage build. Stage one runs `npm ci` and `vite build` with adapter-node, stage two copies the self contained `build/` output onto a bare node:alpine. Around 230 MB, runs as the node user.
 - The Strapi image ([content-management-system/Dockerfile.prod](content-management-system/Dockerfile.prod)) needs the C toolchain in the build stage for sharp, plus dev dependencies for the TypeScript admin build. It prunes dev deps after building so the runtime stage only needs vips.
@@ -50,17 +51,25 @@ Everything configurable lives in a single `.env` on the server, next to `docker-
 - `APP_KEYS`, `API_TOKEN_SALT`, `ADMIN_JWT_SECRET`, `TRANSFER_TOKEN_SALT`, `JWT_SECRET`, `ENCRYPTION_KEY` for Strapi, generated fresh for prod with `openssl rand -base64 32`
 - `STRAPI_URL` and `STRAPI_READ_API_KEY` for the frontend. The token is a read-only API token created in the Strapi admin
 - `SITE_DOMAIN` and `CMS_DOMAIN` for nginx routing
+- `BACKUP_REPOSITORY`, `BACKUP_PASSWORD`, `BACKUP_B2_KEY_ID` and `BACKUP_B2_APPLICATION_KEY` for backups. If they're empty the site still runs, it just doesn't back up
 
 `ENCRYPTION_KEY` is easy to miss. Strapi uses it to encrypt stored API tokens and does not complain loudly when it's absent.
 
 ## State and backups
 
-Exactly two things on the server hold state, both named Docker volumes:
+Only three things on the server can't be rebuilt from the repo and GHCR:
 
-- `strapi-data`, the Postgres data directory
-- `strapi-uploads`, mounted at Strapi's `public/uploads`, all uploaded images and PDFs
+- the `strapi-data` volume, the database
+- the `strapi-uploads` volume, every uploaded image and PDF
+- `/srv/ytt/.env`, the secrets. Lose `ENCRYPTION_KEY` and every stored API token is gone
 
-Containers are disposable and get recreated on every release. The volumes are the only copies of production content, so they are what backups need to cover (a `pg_dump` cron plus an archive of the uploads volume).
+The `backup` container copies all three to Backblaze B2 every night at 03:00 UTC using [restic](https://restic.net). It's encrypted before it leaves the server and only uploads what changed. We keep 7 daily, 4 weekly and 6 monthly backups, and a check on Sundays makes sure they aren't corrupted.
+
+It ships like everything else (tag, pull, `up -d`). The only setup is the `BACKUP_*` lines in `.env`. The database is backed up with `pg_dump` instead of copying the volume, since copying a running database gives you a broken copy.
+
+Keep the backup password and B2 key in a password manager as well as on the server. Without the password nobody can open the backups, including Backblaze.
+
+Setup, restoring and moving servers are in [ops/backup/README.md](ops/backup/README.md).
 
 ## Releasing
 
@@ -79,9 +88,10 @@ docker compose -f docker-compose.prod.yaml up -d
 
 Content changes don't need a release at all. Pages are rendered per request, so anything published in the admin shows up on the next page load.
 
-## Things that have bitten us before
+## Notes
 
-- **Stale generated types break the Strapi image build.** The dev container regenerates `types/generated/` internally but doesn't write it back to the repo, so after any schema change you have to regenerate them and commit (`npm run strapi ts:generate-types` inside the dev container, then copy the files out). The production build type checks against them and fails otherwise.
-- **Frontend env is runtime, keep it that way.** Importing from `$env/static/private` inlines values into the bundle at build time, which would bake secrets into a public image. Always use `$env/dynamic/private` in server code.
-- **Sections must render without CMS data.** Every section component has fallbacks for missing content. A fresh deploy has an empty database and the site still has to come up. This also covers the window where the read token isn't configured yet.
-- **The frontend must not call the CMS through its public URL.** Cloudflare can serve an HTML challenge page to requests coming from a datacenter IP, which the frontend can't answer, and every page load would 500 trying to parse HTML as JSON. Internal traffic stays on the Docker network.
+- **Commit the generated types after a schema change.** The dev container doesn't write `types/generated/` back to the repo, and the prod build fails on stale ones. Run `npm run strapi ts:generate-types` in the dev container and copy them out.
+- **Use `$env/dynamic/private`, not `static`.** Static bakes secrets into the public image.
+- **Sections have to render with no CMS data.** A fresh deploy has an empty database and no read token, so everything needs fallbacks.
+- **The frontend talks to the CMS over the Docker network, not the public URL.** Cloudflare sometimes answers server traffic with a challenge page, which breaks every page load.
+- **Only use the "Keep only the last version of the file" lifecycle rule on the backup bucket.** A custom rule that hides files after N days will hide the live backup data too and wreck the repo.
