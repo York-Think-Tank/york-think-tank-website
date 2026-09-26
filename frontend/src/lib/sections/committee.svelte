@@ -32,8 +32,11 @@
                 href="/contributors/{member.documentId}?back=/%23committee"
                 class="group flex flex-col items-center text-center gap-3 w-1/3 md:w-1/4 px-2 md:px-3"
             >
-                <h3 class="text-base md:text-2xl font-black text-[#9a0002] leading-tight">
-                    {member.current_committee_position ?? 'Committee Member'}
+                <!--Title and name sit in fixed 3-line boxes that wrap unbroken strings and ellipsis past 3 lines, so every row lines up-->
+                <h3 class="flex items-center justify-center w-full h-[3lh] text-base md:text-2xl font-black text-[#9a0002] leading-tight">
+                    <span class="line-clamp-3 wrap-anywhere">
+                        {member.current_committee_position ?? 'Committee Member'}
+                    </span>
                 </h3>
                 <div class="w-full max-w-44 aspect-square rounded-full overflow-hidden border-4 border-[#9a0002] group-hover:border-[#febd59] transition bg-[#febd59]">
                     {#if member.photo}
@@ -51,8 +54,10 @@
                         />
                     {/if}
                 </div>
-                <p class="text-base md:text-xl text-[#030200] underline decoration-[#9a0002]/40 decoration-2 underline-offset-4 group-hover:decoration-[#9a0002] transition">
-                    {member.name}
+                <p class="flex items-center justify-center w-full h-[3lh] text-base md:text-xl text-[#030200]">
+                    <span class="line-clamp-3 wrap-anywhere underline decoration-[#9a0002]/40 decoration-2 underline-offset-4 group-hover:decoration-[#9a0002] transition">
+                        {member.name}
+                    </span>
                 </p>
             </a>
         {/each}
