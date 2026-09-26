@@ -11,9 +11,9 @@ internet
    |
 Cloudflare (TLS, proxied DNS)
    |
- nginx :80 ── ytt-dev.bensonc.how ──────> frontend :3000   (SvelteKit, adapter-node)
+ nginx :80 ── yorkthinktank.co.uk ──────> frontend :3000   (SvelteKit, adapter-node)
    |
-   └──────── cms-ytt-dev.bensonc.how ──> strapi :1337      (admin, REST API, /uploads)
+   └──────── cms.yorkthinktank.co.uk ──> strapi :1337      (admin, REST API, /uploads)
                                              |
                                          strapiDB :5432    (Postgres, internal only)
 ```
@@ -45,8 +45,9 @@ No secrets, tokens or URLs are baked into either image. The frontend reads its c
 
 ## Configuration
 
-Everything configurable lives in a single `.env` on the server, next to `docker-compose.prod.yaml`. It's never committed. The variable names (values in [.env.example](.env.example)):
+Everything configurable lives in a single `.env` in the repo clone on the server. It's never committed. The variable names (values in [.env.example](.env.example)):
 
+- `COMPOSE_FILE=docker-compose.prod.yaml`, so plain `docker compose` runs the prod stack. Without it you get the dev one
 - `DATABASE_NAME`, `DATABASE_USERNAME`, `DATABASE_PASSWORD`, `DATABASE_CLIENT`, `DATABASE_HOST` for Postgres
 - `APP_KEYS`, `API_TOKEN_SALT`, `ADMIN_JWT_SECRET`, `TRANSFER_TOKEN_SALT`, `JWT_SECRET`, `ENCRYPTION_KEY` for Strapi, generated fresh for prod with `openssl rand -base64 32`
 - `STRAPI_URL` and `STRAPI_READ_API_KEY` for the frontend. The token is a read-only API token created in the Strapi admin
@@ -71,6 +72,21 @@ Keep the backup password and B2 key in a password manager as well as on the serv
 
 Setup, restoring and moving servers are in [ops/backup/README.md](ops/backup/README.md).
 
+## Deploying
+
+The server is a clone of this repo at `/srv/ytt`. Setting up a new one:
+
+```bash
+sudo apt-get install -y git
+sudo git clone https://github.com/York-Think-Tank/york-think-tank-website.git /srv/ytt
+sudo chown -R "$USER": /srv/ytt
+cd /srv/ytt
+cp .env.example .env && chmod 600 .env   # fill in the Production section
+docker compose up -d
+```
+
+The compose file pins the project name to `ytt`, so the volumes are always `ytt_strapi-data` and `ytt_strapi-uploads` whatever the folder is called.
+
 ## Releasing
 
 ```bash
@@ -78,13 +94,14 @@ Setup, restoring and moving servers are in [ops/backup/README.md](ops/backup/REA
 git tag v1.2.3
 git push origin v1.2.3        # GitHub Actions builds and pushes the images
 
-# on the server
+# on the server, once the build is green
 cd /srv/ytt
-docker compose -f docker-compose.prod.yaml pull
-docker compose -f docker-compose.prod.yaml up -d
+git pull
+docker compose pull
+docker compose up -d
 ```
 
-`up -d` only recreates containers whose image or config changed, the database keeps running and volumes are untouched. To roll back, pin the compose file to the previous version tag and `up -d` again, the old tags stay on GHCR.
+`up -d` only recreates containers whose image or config changed, the database keeps running and volumes are untouched. To roll back, change the image tags in the compose file to the previous version and `up -d`, the old tags stay on GHCR. Run `git checkout docker-compose.prod.yaml` before the next `git pull`, or the pull will refuse.
 
 Content changes don't need a release at all. Pages are rendered per request, so anything published in the admin shows up on the next page load.
 

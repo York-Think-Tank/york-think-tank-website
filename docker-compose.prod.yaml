@@ -1,7 +1,12 @@
-# Production stack. Copy this file, nginx/, and a filled-in .env (see
-# .env.example, "Production" section) to the server, then:
-#   docker compose -f docker-compose.prod.yaml pull
-#   docker compose -f docker-compose.prod.yaml up -d
+# Production stack. Clone the repo on the server, copy .env.example to .env and
+# fill in the "Production" section, then:
+#   docker compose pull
+#   docker compose up -d
+# COMPOSE_FILE in .env points plain `docker compose` at this file.
+
+# Volumes are named after the project, so the clone's folder name must not change it
+name: ytt
+
 services:
   nginx:
     container_name: nginx

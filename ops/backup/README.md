@@ -35,8 +35,8 @@ Save these in a password manager too. If the password is lost the backups can't 
 
 ```bash
 cd /srv/ytt
-docker compose -f docker-compose.prod.yaml pull
-docker compose -f docker-compose.prod.yaml up -d
+docker compose pull
+docker compose up -d
 docker exec backup backup.sh              # run one now
 docker exec backup restic snapshots       # should list ytt-db and ytt-files
 ```
@@ -61,33 +61,33 @@ Uploads:
 
 ```bash
 cd /srv/ytt
-docker compose -f docker-compose.prod.yaml run --rm --no-deps --volume ytt_strapi-uploads:/restore \
+docker compose run --rm --no-deps --volume ytt_strapi-uploads:/restore \
   backup restic restore --tag ytt-files latest:/data/uploads --target /restore
 ```
 
 `.env`, written to a separate file so you can compare first:
 
 ```bash
-docker compose -f docker-compose.prod.yaml run --rm --no-deps -T \
+docker compose run --rm --no-deps -T \
   backup restic dump --tag ytt-files latest /data/srv/.env > .env.restored
 ```
 
 ## Moving to a new server or domain
 
 1. Stop backups on the old server so two servers don't write to the same repo: `docker stop backup`
-2. On the new server, install Docker and copy `docker-compose.prod.yaml` and `nginx/` to `/srv/ytt`.
-3. Make a `.env` with just the four `BACKUP_*` lines, then pull the real one out of the backup:
+2. On the new server, install Docker and clone the repo to `/srv/ytt` (see Deploying in [infrastructure.md](../../infrastructure.md)).
+3. Make a `.env` with just `COMPOSE_FILE=docker-compose.prod.yaml` and the four `BACKUP_*` lines, then pull the real one out of the backup:
 
    ```bash
    cd /srv/ytt
-   docker compose -f docker-compose.prod.yaml pull
-   docker compose -f docker-compose.prod.yaml run --rm --no-deps -T \
+   docker compose pull
+   docker compose run --rm --no-deps -T \
      backup restic dump --tag ytt-files latest /data/srv/.env > .env.restored
    mv .env.restored .env && chmod 600 .env
    ```
 
 4. New domain? Change `SITE_DOMAIN`, `CMS_DOMAIN` and `STRAPI_URL` in `.env`. Nothing in the database needs touching. If you forget `STRAPI_URL`, images will still point at the old domain.
-5. `docker compose -f docker-compose.prod.yaml up -d`, wait for `strapiDB` to be healthy, then restore the database and uploads as above.
+5. `docker compose up -d`, wait for `strapiDB` to be healthy, then restore the database and uploads as above.
 6. Point the Cloudflare DNS records at the new IP. Keep the old server around until the new one is working.
 
 ## Notes

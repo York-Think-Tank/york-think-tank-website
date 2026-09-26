@@ -29,7 +29,7 @@ Strapi schema changes end up in `content-management-system/src/api/`, commit tho
 
 ## Deployment
 
-Push a version tag (`v1.2.3`) and GitHub Actions builds the production images and pushes them to GHCR. The server pulls and restarts. Full details in [infrastructure.md](infrastructure.md).
+The server is a clone of this repo. Push a version tag (`v1.2.3`) and GitHub Actions builds the production images, then on the server run `git pull`, `docker compose pull` and `docker compose up -d`. Full details in [infrastructure.md](infrastructure.md).
 
 ## License
 
