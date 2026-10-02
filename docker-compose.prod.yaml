@@ -8,12 +8,25 @@
 name: ytt
 
 services:
+  # Outbound-only link to Cloudflare, so nothing on the server needs an open port or a public IP
+  cloudflared:
+    container_name: cloudflared
+    # latest so the normal docker compose pull keeps it current.
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN:-}
+      # auto so the same config works over IPv4 on AWS and IPv6 only at home
+      TUNNEL_EDGE_IP_VERSION: auto
+    networks:
+      - web
+
+  # No published port, requests only arrive from cloudflared over the web network
   nginx:
     container_name: nginx
     image: nginx:1.29-alpine
     restart: unless-stopped
-    ports:
-      - "80:80"
     environment:
       SITE_DOMAIN: ${SITE_DOMAIN}
       CMS_DOMAIN: ${CMS_DOMAIN}

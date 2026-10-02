@@ -4,12 +4,14 @@ How the site is built, shipped and hosted. The root README covers local developm
 
 ## The short version
 
-Everything runs on one small VPS with Docker Compose: five containers (nginx, the SvelteKit frontend, Strapi, Postgres and a nightly backup job). Cloudflare sits in front of the box and handles TLS and DNS. Images are built by GitHub Actions when we push a version tag, and the server just pulls them from GHCR.
+Everything runs on one small VPS with Docker Compose: six containers (a Cloudflare Tunnel, nginx, the SvelteKit frontend, Strapi, Postgres and a nightly backup job). Cloudflare sits in front and handles TLS and DNS, and reaches the server through the tunnel. Images are built by GitHub Actions when we push a version tag, and the server just pulls them from GHCR.
 
 ```
 internet
    |
 Cloudflare (TLS, proxied DNS)
+   |
+cloudflared                (outbound tunnel, no open ports)
    |
  nginx :80 ── yorkthinktank.co.uk ──────> frontend :3000   (SvelteKit, adapter-node)
    |
@@ -18,17 +20,18 @@ Cloudflare (TLS, proxied DNS)
                                          strapiDB :5432    (Postgres, internal only)
 ```
 
-nginx is the only container with a published port. It routes purely on the Host header, so both hostnames point at the same machine. The DB is never reachable from outside, only Strapi can talk to it over the internal Docker network.
+Nothing has a published port. `cloudflared` connects out to Cloudflare and hands requests to nginx over the Docker network, so hitting the server's IP gets you nothing. nginx routes purely on the Host header, which the tunnel passes through untouched. The DB is only reachable by Strapi and the backup job over the internal Docker network.
 
 ## The containers
 
-| service  | image                                   | job |
-|----------|-----------------------------------------|-----|
-| nginx    | nginx:alpine (stock)                    | reverse proxy for both hostnames |
-| frontend | ghcr.io/york-think-tank/ytt-frontend    | server side rendered SvelteKit site |
-| strapi   | ghcr.io/york-think-tank/ytt-strapi      | CMS admin panel + REST API + uploaded media |
-| strapiDB | postgres:alpine (stock)                 | database for Strapi |
-| backup   | ghcr.io/york-think-tank/ytt-backup      | nightly encrypted backups to Backblaze B2 |
+| service     | image                                   | job |
+|-------------|-----------------------------------------|-----|
+| cloudflared | cloudflare/cloudflared (stock)          | tunnel from Cloudflare to nginx, the only way in |
+| nginx       | nginx:alpine (stock)                    | reverse proxy for both hostnames |
+| frontend    | ghcr.io/york-think-tank/ytt-frontend    | server side rendered SvelteKit site |
+| strapi      | ghcr.io/york-think-tank/ytt-strapi      | CMS admin panel + REST API + uploaded media |
+| strapiDB    | postgres:alpine (stock)                 | database for Strapi |
+| backup      | ghcr.io/york-think-tank/ytt-backup      | nightly encrypted backups to Backblaze B2 |
 
 The nginx config is a template ([nginx/templates/default.conf.template](nginx/templates/default.conf.template)). The official image runs envsubst on it at startup, so the hostnames come from the server's `.env` rather than being hardcoded. It also raises the upload limit for the CMS (journal and project PDFs) and sets long cache headers on `/uploads/`.
 
@@ -52,6 +55,7 @@ Everything configurable lives in a single `.env` in the repo clone on the server
 - `APP_KEYS`, `API_TOKEN_SALT`, `ADMIN_JWT_SECRET`, `TRANSFER_TOKEN_SALT`, `JWT_SECRET`, `ENCRYPTION_KEY` for Strapi, generated fresh for prod with `openssl rand -base64 32`
 - `STRAPI_URL` and `STRAPI_READ_API_KEY` for the frontend. The token is a read-only API token created in the Strapi admin
 - `SITE_DOMAIN` and `CMS_DOMAIN` for nginx routing
+- `TUNNEL_TOKEN` for the Cloudflare Tunnel. The hostnames themselves are set in the Cloudflare dashboard under Networking → Tunnels → `ytt` → Routes, both pointing at `http://nginx:80`
 - `BACKUP_REPOSITORY`, `BACKUP_PASSWORD`, `BACKUP_B2_KEY_ID` and `BACKUP_B2_APPLICATION_KEY` for backups. If they're empty the site still runs, it just doesn't back up
 
 `ENCRYPTION_KEY` is easy to miss. Strapi uses it to encrypt stored API tokens and does not complain loudly when it's absent.
@@ -112,3 +116,5 @@ Content changes don't need a release at all. Pages are rendered per request, so 
 - **Sections have to render with no CMS data.** A fresh deploy has an empty database and no read token, so everything needs fallbacks.
 - **The frontend talks to the CMS over the Docker network, not the public URL.** Cloudflare sometimes answers server traffic with a challenge page, which breaks every page load.
 - **Only use the "Keep only the last version of the file" lifecycle rule on the backup bucket.** A custom rule that hides files after N days will hide the live backup data too and wreck the repo.
+- **The DNS records are CNAMEs to the tunnel, not A records to an IP.** Moving servers doesn't touch DNS.
+- **Two servers running the same tunnel token both get traffic.** When moving, shut the old one down once the new one works.

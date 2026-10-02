@@ -88,7 +88,7 @@ docker compose run --rm --no-deps -T \
 
 4. New domain? Change `SITE_DOMAIN`, `CMS_DOMAIN` and `STRAPI_URL` in `.env`. Nothing in the database needs touching. If you forget `STRAPI_URL`, images will still point at the old domain.
 5. `docker compose up -d`, wait for `strapiDB` to be healthy, then restore the database and uploads as above.
-6. Point the Cloudflare DNS records at the new IP. Keep the old server around until the new one is working.
+6. Nothing to change in DNS, the tunnel follows the token. Once the new server works, run `docker compose down` on the old one, otherwise both keep taking traffic.
 
 ## Notes
 

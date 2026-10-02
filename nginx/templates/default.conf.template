@@ -1,10 +1,8 @@
 # Rendered by the nginx image's envsubst on startup; ${SITE_DOMAIN} and
 # ${CMS_DOMAIN} come from the .env via docker-compose.prod.yaml.
 #
-# TLS is expected to be terminated in front of this (e.g. Cloudflare proxied
-# DNS, or host-level certbot forwarding to :80). If you later want nginx
-# itself to hold certificates, add a 443 server block per domain and mount
-# the certs into the container.
+# Requests only arrive from cloudflared over the Docker network, and Cloudflare
+# handles TLS, so plain :80 is all nginx needs.
 
 server {
     listen 80;
