@@ -4,7 +4,7 @@ How the site is built, shipped and hosted. The root README covers local developm
 
 ## The short version
 
-Everything runs on one small VPS with Docker Compose: six containers (a Cloudflare Tunnel, nginx, the SvelteKit frontend, Strapi, Postgres and a nightly backup job). Cloudflare sits in front and handles TLS and DNS, and reaches the server through the tunnel. Images are built by GitHub Actions when we push a version tag, and the server just pulls them from GHCR.
+Everything runs on one small VPS with Docker Compose: seven containers (a Cloudflare Tunnel, nginx, the SvelteKit frontend, Strapi, Postgres, a nightly backup job and Watchtower). Cloudflare sits in front and handles TLS and DNS, and reaches the server through the tunnel. Images are built by GitHub Actions when we push a version tag, and Watchtower on the server picks them up from GHCR within 15 minutes.
 
 ```
 internet
@@ -32,6 +32,7 @@ Nothing has a published port. `cloudflared` connects out to Cloudflare and hands
 | strapi      | ghcr.io/york-think-tank/ytt-strapi      | CMS admin panel + REST API + uploaded media |
 | strapiDB    | postgres:alpine (stock)                 | database for Strapi |
 | backup      | ghcr.io/york-think-tank/ytt-backup      | nightly encrypted backups to Backblaze B2 |
+| watchtower  | nickfedor/watchtower (stock)            | checks for newer images every 15 minutes and swaps them in |
 
 The nginx config is a template ([nginx/templates/default.conf.template](nginx/templates/default.conf.template)). The official image runs envsubst on it at startup, so the hostnames come from the server's `.env` rather than being hardcoded. It also raises the upload limit for the CMS (journal and project PDFs) and sets long cache headers on `/uploads/`.
 
@@ -123,11 +124,15 @@ The compose file pins the project name to `ytt`, so the volumes are always `ytt_
 ## Releasing
 
 ```bash
-# locally
 git tag v1.2.3
 git push origin v1.2.3        # GitHub Actions builds and pushes the images
+```
 
-# on the server, once the build is green
+That's it for code changes. Watchtower sees the new images within 15 minutes and restarts those containers itself.
+
+If the release also changed `docker-compose.prod.yaml` or `nginx/`, Watchtower won't pick that up, so on the server:
+
+```bash
 cd /srv/ytt
 git pull
 docker compose pull
@@ -147,3 +152,5 @@ Content changes don't need a release at all. Pages are rendered per request, so 
 - **Only use the "Keep only the last version of the file" lifecycle rule on the backup bucket.** A custom rule that hides files after N days will hide the live backup data too and wreck the repo.
 - **The DNS records are CNAMEs to the tunnel, not A records to an IP.** Moving servers doesn't touch DNS.
 - **Two servers running the same tunnel token both get traffic.** When moving, shut the old one down once the new one works.
+- **Third-party images are pinned to a major version** (`postgres:18-alpine`, `nginx:1-alpine`, `watchtower:1`), so Watchtower only applies minor updates to them, and only once they're 3 days old. Moving a major is a manual tag change. For Postgres it also needs a dump and restore (the backup restore steps) and bumping `postgresql18-client` in `ops/backup/Dockerfile`.
+- **Watchtower runs as `deploy` through the rootless Docker socket**, so `docker compose` has to be run as `deploy` in an SSH session, or the socket path is missing and compose refuses to start.

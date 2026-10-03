@@ -29,7 +29,7 @@ Strapi schema changes end up in `content-management-system/src/api/`, commit tho
 
 ## Deployment
 
-The server is a clone of this repo, run by a `deploy` user with rootless Docker and no sudo. Push a version tag (`v1.2.3`) and GitHub Actions builds the production images, then on the server run `git pull`, `docker compose pull` and `docker compose up -d`. Full details in [infrastructure.md](infrastructure.md).
+The server is a clone of this repo, run by a `deploy` user with rootless Docker and no sudo. Push a version tag (`v1.2.3`) and GitHub Actions builds the production images, which Watchtower on the server picks up within 15 minutes. Changes to the compose file or `nginx/` also need `git pull` and `docker compose up -d` on the server. Full details in [infrastructure.md](infrastructure.md).
 
 ## License
 

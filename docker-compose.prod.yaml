@@ -11,10 +11,12 @@ services:
   # Outbound-only link to Cloudflare, so nothing on the server needs an open port or a public IP
   cloudflared:
     container_name: cloudflared
-    # latest so the normal docker compose pull keeps it current.
+    # latest is safe here, cloudflared uses calendar versions with no majors to hold back
     image: cloudflare/cloudflared:latest
     restart: unless-stopped
     command: tunnel --no-autoupdate run
+    labels:
+      com.centurylinklabs.watchtower.cooldown-delay: "3d"
     environment:
       TUNNEL_TOKEN: ${TUNNEL_TOKEN:-}
       # auto so the same config works over IPv4 on AWS and IPv6 only at home
@@ -25,8 +27,10 @@ services:
   # No published port, requests only arrive from cloudflared over the web network
   nginx:
     container_name: nginx
-    image: nginx:1.29-alpine
+    image: nginx:1-alpine
     restart: unless-stopped
+    labels:
+      com.centurylinklabs.watchtower.cooldown-delay: "3d"
     environment:
       SITE_DOMAIN: ${SITE_DOMAIN}
       CMS_DOMAIN: ${CMS_DOMAIN}
@@ -73,7 +77,10 @@ services:
   strapiDB:
     container_name: strapiDB
     restart: unless-stopped
-    image: postgres:18.4-alpine3.23
+    # Major tag only, a Postgres major upgrade needs a dump and restore so it stays a manual change
+    image: postgres:18-alpine
+    labels:
+      com.centurylinklabs.watchtower.cooldown-delay: "3d"
     environment:
       POSTGRES_USER: ${DATABASE_USERNAME}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
@@ -115,6 +122,20 @@ services:
     depends_on:
       strapiDB:
         condition: service_healthy
+
+  # Every 15 min swaps in newer images on the same tags, so third-party majors are held back by their pinned tags
+  # and third-party images wait 3 days via their cooldown label while our own deploy straight away
+  watchtower:
+    container_name: watchtower
+    image: nickfedor/watchtower:1
+    restart: unless-stopped
+    environment:
+      WATCHTOWER_POLL_INTERVAL: 900
+      WATCHTOWER_CLEANUP: "true"
+    volumes:
+      - ${XDG_RUNTIME_DIR:?run docker compose as the deploy user}/docker.sock:/var/run/docker.sock
+    labels:
+      com.centurylinklabs.watchtower.cooldown-delay: "3d"
 
 volumes:
   strapi-data:
