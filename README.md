@@ -15,7 +15,7 @@ Website for the York Think Tank. Strapi for the content management system (CMS)/
 
 Strapi is a FOSS headless CMS that lets you define content types (like the projects, journals and forums) and instantly get a REST API. It comes with a UI at `/admin`, so non-technical committee members can log in and write, edit and publish content like a regular CMS, without us needing to build one from scratch.
 
-## Running it locally
+## Development setup
 
 1. Clone the repo
 2. Install Docker and Docker Compose
