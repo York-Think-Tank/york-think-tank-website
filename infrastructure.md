@@ -78,16 +78,45 @@ Setup, restoring and moving servers are in [ops/backup/README.md](ops/backup/REA
 
 ## Deploying
 
-The server is a clone of this repo at `/srv/ytt`. Setting up a new one:
+The server runs everything as a `deploy` user with [rootless Docker](https://docs.docker.com/engine/security/rootless/) and no sudo. To set up a new one (Debian 13):
+
+**1. As root, once:**
 
 ```bash
-sudo apt-get install -y git
-sudo git clone https://github.com/York-Think-Tank/york-think-tank-website.git /srv/ytt
-sudo chown -R "$USER": /srv/ytt
+apt-get update
+apt-get install -y ca-certificates curl git uidmap dbus-user-session
+install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian $(. /etc/os-release; echo $VERSION_CODENAME) stable" > /etc/apt/sources.list.d/docker.list
+apt-get update
+apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin docker-ce-rootless-extras
+
+systemctl disable --now docker.service docker.socket
+grep deploy /etc/subuid /etc/subgid      # if empty: usermod --add-subuids 100000-165535 --add-subgids 100000-165535 deploy
+loginctl enable-linger deploy
+install -d -o deploy -g deploy /srv/ytt
+```
+
+**2. As `deploy`**, logged in over SSH (not `su`):
+
+```bash
+dockerd-rootless-setuptool.sh install
+echo 'export DOCKER_HOST=unix:///run/user/$(id -u)/docker.sock' >> ~/.bashrc
+source ~/.bashrc
+systemctl --user enable docker
+docker info | grep -i rootless            # should print "rootless"
+```
+
+**3. As `deploy`, start the site:**
+
+```bash
+git clone https://github.com/York-Think-Tank/york-think-tank-website.git /srv/ytt
 cd /srv/ytt
-cp .env.example .env && chmod 600 .env   # fill in the Production section
+cp .env.example .env && chmod 600 .env    # fill in the Production section
 docker compose up -d
 ```
+
+Moving an existing site onto a new server is in [ops/backup/README.md](ops/backup/README.md).
 
 The compose file pins the project name to `ytt`, so the volumes are always `ytt_strapi-data` and `ytt_strapi-uploads` whatever the folder is called.
 

@@ -74,8 +74,14 @@ docker compose run --rm --no-deps -T \
 
 ## Moving to a new server or domain
 
-1. Stop backups on the old server so two servers don't write to the same repo: `docker stop backup`
-2. On the new server, install Docker and clone the repo to `/srv/ytt` (see Deploying in [infrastructure.md](../../infrastructure.md)).
+1. On the old server, ask editors to stop making changes, then take a final backup and stop backups there so two servers never write to the same repo:
+
+   ```bash
+   docker exec backup backup.sh
+   docker stop backup
+   ```
+
+2. Set up the new server with rootless Docker and clone the repo to `/srv/ytt`, as in Deploying in [infrastructure.md](../../infrastructure.md). Stop before the `cp .env.example` line.
 3. Make a `.env` with just `COMPOSE_FILE=docker-compose.prod.yaml` and the four `BACKUP_*` lines, then pull the real one out of the backup:
 
    ```bash
@@ -87,8 +93,15 @@ docker compose run --rm --no-deps -T \
    ```
 
 4. New domain? Change `SITE_DOMAIN`, `CMS_DOMAIN` and `STRAPI_URL` in `.env`. Nothing in the database needs touching. If you forget `STRAPI_URL`, images will still point at the old domain.
-5. `docker compose up -d`, wait for `strapiDB` to be healthy, then restore the database and uploads as above.
-6. Nothing to change in DNS, the tunnel follows the token. Once the new server works, run `docker compose down` on the old one, otherwise both keep taking traffic.
+5. Start only the database and backup containers, so the tunnel isn't serving an empty site yet. Once `strapiDB` is healthy, restore the database and uploads as in Restoring above:
+
+   ```bash
+   docker compose up -d strapiDB backup
+   docker compose ps
+   ```
+
+6. `docker compose up -d` starts everything, including the tunnel. Nothing changes in DNS, the tunnel follows the token. Then run `docker compose down` on the old server, otherwise both keep taking traffic.
+7. Check the site and images load and you can log in at `/admin`. If not, `docker compose up -d` on the old server takes traffic back straight away.
 
 ## Notes
 
