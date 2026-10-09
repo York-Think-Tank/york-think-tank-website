@@ -28,7 +28,7 @@
                 publication={journal}
                 href="{data.strapiUrl}{journal.pdf?.url}"
                 external
-                date={journal.publishedAt ?? journal.createdAt}
+                date={journal.publication_date}
                 coverFallback={journalCover}
                 borderColor="#febd59"
                 strapiUrl={data.strapiUrl}

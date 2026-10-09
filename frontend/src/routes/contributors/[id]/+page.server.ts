@@ -14,7 +14,7 @@ export async function load({ params, url }) {
             `civitas-policy-projects?${byContributor}&populate[pdf]=true&populate[cover_image]=true&populate[contributors]=true&sort=createdAt:desc`
         ),
         strapi(
-            `civitas-journals?${byContributor}&populate[pdf]=true&populate[contributors]=true&sort=createdAt:desc`
+            `civitas-journals?${byContributor}&populate[pdf]=true&populate[contributors]=true&sort=publication_date:desc`
         ),
         strapi(
             `civitas-forum-posts?${byContributor}&populate[cover_image]=true&populate[contributors]=true&sort=createdAt:desc`

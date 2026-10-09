@@ -51,7 +51,7 @@
                 {#if journals.length}
                     <div class="border-t border-[#9a0002]">
                         {#each journals.slice(0, 6) as journal, i}
-                            {@const s = dateStamp(journal.publishedAt ?? journal.createdAt)}
+                            {@const s = dateStamp(journal.publication_date)}
                             <!--Title and byline are separate links (a link can't nest in another);
                                 the shared `group` drives the row's hover states-->
                             <div

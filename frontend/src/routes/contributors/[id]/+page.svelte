@@ -38,28 +38,30 @@
     // journals open their PDF; forum posts open their reading page. Journals have no
     // cover_image field, so their cards render the typographic journalCover snippet
     type Kind = 'Policy Project' | 'Forum' | 'Journal';
-    const when = (item: any) => +new Date(item.publishedAt ?? item.createdAt);
     const feed = $derived(
         [
             ...data.projects.map((item: any) => ({
                 kind: 'Policy Project' as Kind,
                 item,
                 href: `${strapiUrl}${item.pdf?.url}`,
-                external: true
+                external: true,
+                date: item.publishedAt ?? item.createdAt
             })),
             ...data.forumPosts.map((item: any) => ({
                 kind: 'Forum' as Kind,
                 item,
                 href: `/forum/${item.documentId}`,
-                external: false
+                external: false,
+                date: item.publishedAt ?? item.createdAt
             })),
             ...data.journals.map((item: any) => ({
                 kind: 'Journal' as Kind,
                 item,
                 href: `${strapiUrl}${item.pdf?.url}`,
-                external: true
+                external: true,
+                date: item.publication_date
             }))
-        ].sort((a, b) => when(b.item) - when(a.item))
+        ].sort((a, b) => +new Date(b.date) - +new Date(a.date))
     );
 
     const kindCounts = $derived([
@@ -288,7 +290,7 @@
                                 publication={entry.item}
                                 href={entry.href}
                                 external={entry.external}
-                                date={entry.item.publishedAt ?? entry.item.createdAt}
+                                date={entry.date}
                                 borderColor="#febd59"
                                 coverFallback={entry.kind === 'Journal' ? journalCover : undefined}
                                 {strapiUrl}
