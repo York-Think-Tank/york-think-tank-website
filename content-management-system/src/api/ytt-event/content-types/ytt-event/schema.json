@@ -37,6 +37,13 @@
     },
     "signup_link": {
       "type": "string"
+    },
+    "slides_pdf": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "files"
+      ]
     }
   }
 }

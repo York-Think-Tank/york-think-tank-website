@@ -303,6 +303,22 @@
                     {/each}
                 </div>
 
+                <!--Optional PDF attachment, in the gold pill button used across the site.
+                    The body's text size keeps 70ch the same width as the column above-->
+                {#if post.pdf}
+                    <p class="max-w-[70ch] mx-auto mt-8 text-base md:text-lg">
+                        <a
+                            href="{strapiUrl}{post.pdf.url}"
+                            target="_blank"
+                            rel="noopener"
+                            aria-label="Open the {post.title} PDF"
+                            class="inline-block text-sm md:text-base font-black text-[#9a0002] border-2 border-[#febd59] rounded px-3 py-1.5 hover:bg-[#9a0002] hover:border-[#9a0002] hover:text-[#febd59] transition"
+                        >
+                            PDF ↗
+                        </a>
+                    </p>
+                {/if}
+
                 <!--Author cards: who wrote it, with the profile link and committee tag-->
                 {#if post.contributors?.length}
                     <div class="max-w-[70ch] mx-auto mt-12 border-t-2 border-[#9a0002]/10 pt-6">

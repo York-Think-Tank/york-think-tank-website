@@ -498,6 +498,7 @@ export interface ApiCivitasForumPostCivitasForumPost
       'api::civitas-forum-post.civitas-forum-post'
     > &
       Schema.Attribute.Private;
+    pdf: Schema.Attribute.Media<'files'>;
     publishedAt: Schema.Attribute.DateTime;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
@@ -673,6 +674,7 @@ export interface ApiYttEventYttEvent extends Struct.CollectionTypeSchema {
     location: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
     signup_link: Schema.Attribute.String;
+    slides_pdf: Schema.Attribute.Media<'files'>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &

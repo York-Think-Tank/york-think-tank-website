@@ -27,6 +27,13 @@
       "type": "blocks",
       "required": true
     },
+    "pdf": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "files"
+      ]
+    },
     "contributors": {
       "type": "relation",
       "relation": "oneToMany",

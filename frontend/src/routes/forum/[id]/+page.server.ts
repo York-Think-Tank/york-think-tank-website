@@ -8,7 +8,7 @@ export async function load({ params, url }) {
     const back = backParam?.startsWith('/') && !backParam.startsWith('//') ? backParam : null;
     // Contributor photos feed the byline avatar stack and the author cards
     const post = await strapi(
-        `civitas-forum-posts/${params.id}?populate[cover_image]=true&populate[contributors][populate][photo]=true`
+        `civitas-forum-posts/${params.id}?populate[cover_image]=true&populate[pdf]=true&populate[contributors][populate][photo]=true`
     );
     if (!post) {
         error(404, 'Forum post not found');

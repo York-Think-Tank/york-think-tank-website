@@ -21,22 +21,45 @@
 </script>
 
 <!--Event card: PublicationCard's frame (cover on top, white body, 4px outline) but for
-    events - no PDF or detail page to link to, so the card is informational. The journals'
-    calendar-style date stamp sits beside the title, and upcoming events with a sign-up
-    link get the gold pill button used across the site-->
+    events - there is no detail page, so only an optional slides PDF is linked, from the
+    cover with a "Slides ↗" badge. The journals' calendar-style date stamp sits beside the
+    title, and upcoming events with a sign-up link get the gold pill button used across
+    the site-->
+{#snippet cover()}
+    {#if event.cover_image}
+        <img
+            src="{strapiUrl}{event.cover_image.url}"
+            alt={event.cover_image.alternativeText ?? event.title}
+            class="w-full h-full object-cover {event.slides_pdf
+                ? 'group-hover:scale-105 transition duration-300'
+                : ''}"
+        />
+    {/if}
+{/snippet}
 <div
-    class="flex flex-col rounded-lg border-4 bg-white shadow-sm hover:shadow-md transition {className}"
+    class="group flex flex-col rounded-lg border-4 bg-white shadow-sm hover:shadow-md transition {className}"
     style="border-color: {borderColor}"
 >
-    <div class="relative aspect-[4/3] overflow-hidden rounded-t-[4px] bg-[#faf8f0]">
-        {#if event.cover_image}
-            <img
-                src="{strapiUrl}{event.cover_image.url}"
-                alt={event.cover_image.alternativeText ?? event.title}
-                class="w-full h-full object-cover"
-            />
-        {/if}
-    </div>
+    {#if event.slides_pdf}
+        <a
+            href="{strapiUrl}{event.slides_pdf.url}"
+            target="_blank"
+            rel="noopener"
+            aria-label="Open the {event.title} slides"
+            class="relative block aspect-[4/3] overflow-hidden rounded-t-[4px] bg-[#faf8f0]"
+        >
+            {@render cover()}
+            <span
+                class="absolute top-2 right-2 text-[10px] md:text-sm font-black text-[#9a0002] bg-[#febd59] rounded px-1.5 py-0.5 md:px-2 md:py-1 shadow"
+            >
+                Slides ↗
+            </span>
+        </a>
+    {:else}
+        <div class="relative aspect-[4/3] overflow-hidden rounded-t-[4px] bg-[#faf8f0]">
+            {@render cover()}
+        </div>
+    {/if}
     <div class="grow flex flex-col p-3">
         <div class="flex items-start gap-3">
             <!--Calendar-style date stamp (visual only), as on the journals rail-->
