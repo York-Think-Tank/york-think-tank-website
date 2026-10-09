@@ -533,6 +533,7 @@ export interface ApiCivitasJournalCivitasJournal
     > &
       Schema.Attribute.Private;
     pdf: Schema.Attribute.Media<'files'> & Schema.Attribute.Required;
+    publication_date: Schema.Attribute.Date & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
@@ -608,6 +609,7 @@ export interface ApiContactSectionContactSection
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     whatsapp_url: Schema.Attribute.String;
+    writer_signup_url: Schema.Attribute.String;
     youtube_url: Schema.Attribute.String;
   };
 }

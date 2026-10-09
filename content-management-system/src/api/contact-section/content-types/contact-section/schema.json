@@ -30,6 +30,9 @@
     "whatsapp_url": {
       "type": "string"
     },
+    "writer_signup_url": {
+      "type": "string"
+    },
     "terms_url": {
       "type": "string"
     },

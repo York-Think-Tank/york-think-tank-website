@@ -11,7 +11,8 @@
     ]);
     const joinLinks = $derived([
         { label: 'Membership', url: data?.membership_url },
-        { label: 'WhatsApp', url: data?.whatsapp_url }
+        { label: 'WhatsApp', url: data?.whatsapp_url },
+        { label: 'Become a Writer', url: data?.writer_signup_url }
     ]);
 </script>
 
