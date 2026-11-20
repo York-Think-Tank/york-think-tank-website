@@ -10,6 +10,10 @@
     let { data } = $props();
 </script>
 
+<svelte:head>
+    <title>York Think Tank - University of York's Think Tank</title>
+</svelte:head>
+
 <Header />
 <About data={data.aboutPage} strapiUrl={data.strapiUrl} />
 <Committee members={data.committeeMembers} strapiUrl={data.strapiUrl} />
