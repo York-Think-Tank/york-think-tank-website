@@ -6,6 +6,8 @@ ENV NODE_ENV=${NODE_ENV}
 
 WORKDIR /opt/
 COPY package.json package-lock.json ./
+# The npm named in packageManager, the one Dependabot writes the lock file with
+RUN npm install -g "$(node -p 'require("./package.json").packageManager')"
 RUN npm install -g node-gyp
 RUN npm config set fetch-retry-maxtimeout 600000 -g && npm ci
 ENV PATH=/opt/node_modules/.bin:$PATH

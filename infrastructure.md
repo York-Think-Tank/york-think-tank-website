@@ -157,6 +157,7 @@ Content changes don't need a release at all. Pages are rendered per request, so 
 
 ## Notes
 
+- **`packageManager` in each `package.json` is the only place the npm version is set.** Dependabot writes lock files with that npm and the Dockerfiles install it before `npm ci`, so the two always match. Lock files from a different npm major can fail `npm ci`, so change the version there and nowhere else.
 - **Commit the generated types after a schema change.** The dev container doesn't write `types/generated/` back to the repo, and the prod build fails on stale ones. Run `npm run strapi ts:generate-types` in the dev container and copy them out.
 - **Use `$env/dynamic/private`, not `static`.** Static bakes secrets into the public image.
 - **Sections have to render with no CMS data.** A fresh deploy has an empty database and no read token, so everything needs fallbacks.

@@ -33,6 +33,7 @@
     "node": ">=20.0.0 <=24.x.x",
     "npm": ">=6.0.0"
   },
+  "packageManager": "npm@12.2.3",
   "strapi": {
     "uuid": "bec576ca-6013-45c1-b17f-946430d78def",
     "installId": "9e69e5c93df8ee9dbc1e6eb7c84bafcb3d9e65cf00880eb351aee5e3f0ce32a5"

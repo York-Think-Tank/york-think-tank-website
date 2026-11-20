@@ -4,6 +4,8 @@
 FROM node:22-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
+# The npm named in packageManager, the one Dependabot writes the lock file with
+RUN npm install -g "$(node -p 'require("./package.json").packageManager')"
 RUN npm ci
 COPY . .
 RUN npm run build
