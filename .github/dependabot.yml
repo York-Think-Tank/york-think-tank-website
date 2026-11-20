@@ -1,0 +1,23 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directories:
+      - /content-management-system
+      - /frontend
+    # Half an hour after the 03:00 UTC backup
+    schedule:
+      interval: weekly
+      time: "03:30"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    # One pull request per app keeps every @strapi/* package on the same version
+    groups:
+      minor-and-patch:
+        patterns: ["*"]
+      security:
+        applies-to: security-updates
+        patterns: ["*"]
+    commit-message:
+      prefix: build
+      include: scope

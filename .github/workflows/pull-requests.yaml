@@ -1,0 +1,65 @@
+name: Pull requests
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: frontend
+            context: ./frontend
+            dockerfile: ./frontend/Dockerfile
+          - name: strapi
+            context: ./content-management-system
+            dockerfile: ./content-management-system/Dockerfile.prod
+          - name: backup
+            context: ./ops/backup
+            dockerfile: ./ops/backup/Dockerfile
+    steps:
+      - uses: actions/checkout@v7
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/build-push-action@v7
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          cache-from: type=gha
+
+  release:
+    needs: build
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    concurrency: release
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    steps:
+      - id: metadata
+        uses: dependabot/fetch-metadata@v3
+
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+
+      # A tag pushed with GITHUB_TOKEN starts no workflow, so the image build is dispatched on it
+      - name: Merge, tag and build
+        if: contains(fromJSON('["version-update:semver-minor", "version-update:semver-patch"]'), steps.metadata.outputs.update-type)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          gh pr merge "$PR_URL" --squash
+          git fetch origin main
+          latest=$(git describe --tags --abbrev=0 --match 'v*.*.*' FETCH_HEAD)
+          next=$(echo "$latest" | awk -F. -v OFS=. '{ $3++; print }')
+          git tag "$next" FETCH_HEAD
+          git push origin "$next"
+          gh workflow run build-production-images.yaml --ref "$next"

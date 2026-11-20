@@ -47,6 +47,17 @@ Pushing a tag like `v1.2.3` triggers [the workflow](.github/workflows/build-prod
 
 No secrets, tokens or URLs are baked into either image. The frontend reads its config at container start (`$env/dynamic/private`), so the same image works in any environment. That also means CI needs zero repository secrets, the built in `GITHUB_TOKEN` is enough to push to GHCR.
 
+Pull requests to `main` build all three images without pushing them ([pull-requests.yaml](.github/workflows/pull-requests.yaml)).
+
+### Automatic dependency updates
+
+Strapi has no official image for Watchtower to follow, so [Dependabot](.github/dependabot.yml) watches npm instead. Every Monday at 03:30 UTC it opens one pull request each for Strapi and the frontend with all minor and patch updates at least 3 days old. Once the images build, the pull request is merged, tagged with the next patch version and released, so Watchtower deploys it within 15 minutes.
+
+- **Majors are never automatic.** Upgrade Strapi with `npx @strapi/upgrade major`.
+- **Security fixes skip the schedule and the 3 days** once Dependabot alerts and security updates are on under Settings → Advanced Security. A fix that needs a new major only shows up as an alert.
+- **A pull request that fails to build stays open** and the site keeps the previous version.
+- **To undo an update**, pin the previous tag as in Releasing, and restore that morning's backup if Strapi migrated the database.
+
 ## Configuration
 
 Everything configurable lives in a single `.env` in the repo clone on the server. It's never committed. The variable names (values in [.env.example](.env.example)):
@@ -124,6 +135,7 @@ The compose file pins the project name to `ytt`, so the volumes are always `ytt_
 ## Releasing
 
 ```bash
+git pull --tags               # Dependabot releases may have added commits and tags
 git tag v1.2.3
 git push origin v1.2.3        # GitHub Actions builds and pushes the images
 ```
