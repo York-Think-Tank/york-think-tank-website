@@ -1,32 +1,27 @@
 <script lang="ts">
     let { data }: { data: any } = $props();
 
-    // Section always renders; CMS entry fills in the destinations. A label
-    // without its URL set shows as plain text instead of a dead link
+    type Link = { label: string; url?: string };
+
+    // Placeholder labels keep the section visible without a CMS entry, and a link
+    // with no URL renders as plain text instead of a dead link
     const email = $derived(data?.email ?? 'thinktank@yorksu.org');
-    const socials = $derived([
-        { label: 'Instagram', url: data?.instagram_url },
-        { label: 'LinkedIn', url: data?.linkedin_url },
-        { label: 'YouTube', url: data?.youtube_url }
-    ]);
-    const joinLinks = $derived([
-        { label: 'Membership', url: data?.membership_url },
-        { label: 'WhatsApp', url: data?.whatsapp_url },
-        { label: 'Become a Writer', url: data?.writer_signup_url }
-    ]);
+    const contactLinks: Link[] = $derived(
+        data?.contact_links ?? [{ label: 'Instagram' }, { label: 'LinkedIn' }, { label: 'YouTube' }]
+    );
+    const joinLinks: Link[] = $derived(
+        data?.join_links ?? [{ label: 'Membership' }, { label: 'WhatsApp' }, { label: 'Become a Writer' }]
+    );
 </script>
 
 <!--Link list shared by both layouts, with the email only under Contact Us-->
-{#snippet linkList(links: { label: string; url?: string }[], sizes: string, withEmail = false)}
-    {#if withEmail}
-        <a
-            href="mailto:{email}"
-            class="block w-fit mb-6 md:mb-12 {sizes} text-[#9a0002] underline decoration-2 underline-offset-4"
-        >
-            {email}
-        </a>
-    {/if}
+{#snippet linkList(links: Link[], sizes: string, withEmail = false)}
     <ul class="space-y-1 md:space-y-2">
+        {#if withEmail}
+            <li class="{sizes} text-[#9a0002]">
+                <a href="mailto:{email}" class="underline decoration-2 underline-offset-4">{email}</a>
+            </li>
+        {/if}
         {#each links as link}
             <li class="{sizes} text-[#9a0002]">
                 {#if link.url}
@@ -54,7 +49,7 @@
     <div
         class="hidden md:grid md:grid-cols-[1fr_auto_1fr] md:grid-rows-[1fr_auto_1fr] min-h-[60vh] py-14 bg-[linear-gradient(to_right,#febd59_50%,#e8eef5_50%)]"
     >
-        {#snippet half(title: string, links: { label: string; url?: string }[], withEmail = false)}
+        {#snippet half(title: string, links: Link[], withEmail = false)}
             <div class="row-start-2 w-full max-w-md lg:max-w-lg mx-auto">
                 <h2 class="text-4xl lg:text-5xl font-black text-black text-left leading-tight mb-10">
                     {title}
@@ -64,7 +59,7 @@
         {/snippet}
 
         <div class="row-span-3 grid grid-rows-subgrid pl-8 pr-6">
-            {@render half('Contact Us', socials, true)}
+            {@render half('Contact Us', contactLinks, true)}
         </div>
         <!--Width is about 0.53x height, which crops the transparent sides of the 460x512 image-->
         <img
@@ -82,14 +77,14 @@
         the headings instead of a full-width band-->
     <div class="md:hidden bg-[#e8eef5] px-8 py-12 min-h-[60vh] flex flex-col justify-center gap-10">
         <img src="/images/bulb.avif" alt="" class="h-28 w-auto mx-auto" />
-        {#snippet mobileBlock(title: string, links: { label: string; url?: string }[], withEmail = false)}
+        {#snippet mobileBlock(title: string, links: Link[], withEmail = false)}
             <div class="w-full max-w-sm mx-auto">
                 <h2 class="text-3xl font-black text-black leading-tight">{title}</h2>
                 <div class="w-16 h-1 rounded bg-[#febd59] mt-2 mb-5"></div>
                 {@render linkList(links, 'text-base', withEmail)}
             </div>
         {/snippet}
-        {@render mobileBlock('Contact Us', socials, true)}
+        {@render mobileBlock('Contact Us', contactLinks, true)}
         {@render mobileBlock('Join Us', joinLinks)}
     </div>
 

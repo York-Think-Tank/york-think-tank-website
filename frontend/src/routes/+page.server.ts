@@ -17,7 +17,7 @@ export async function load() {
                 'civitas-forum-posts?populate[cover_image]=true&populate[contributors]=true&sort=createdAt:desc'
             ),
             strapi('ytt-events?populate[cover_image]=true&populate[slides_pdf]=true&sort=event_date:desc'),
-            strapi('contact-section')
+            strapi('contact-section?populate[contact_links]=true&populate[join_links]=true')
         ]);
     return {
         aboutPage,
