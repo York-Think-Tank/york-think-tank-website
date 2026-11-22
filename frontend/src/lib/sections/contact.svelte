@@ -42,7 +42,7 @@
 {/snippet}
 
 <!--Contact Us / Join Us: the concept's split panel, gold half + white half with
-    the bulb logo over the seam, then the SU footer strip in burgundy-->
+    the bulb logo over the seam-->
 <section id="contact">
     <!--Desktop: gold/white split behind three columns so the bulb owns the middle
         one and never covers text, and both halves share one subgrid so headings line up-->
@@ -87,39 +87,4 @@
         {@render mobileBlock('Contact Us', contactLinks, true)}
         {@render mobileBlock('Join Us', joinLinks)}
     </div>
-
-    <footer class="bg-[#9a0002] px-4 py-4 text-center text-sm md:text-base text-[#faf8f0]">
-        York Think Tank is part of the University of York Students' Union.
-        {#if data?.terms_url}
-            <a
-                href={data.terms_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="underline decoration-1 underline-offset-2 hover:decoration-2"
-            >
-                York SU Terms and Conditions.
-            </a>
-        {/if}
-        {#if data?.disclaimer_url}
-            <a
-                href={data.disclaimer_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="underline decoration-1 underline-offset-2 hover:decoration-2"
-            >
-                UoY Disclaimer.
-            </a>
-        {/if}
-        <p class="mt-1 text-xs md:text-sm text-[#faf8f0]/70">
-            Site made with ❤️ by
-            <a
-                href="https://bensonc.how"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="underline decoration-1 underline-offset-2 hover:decoration-2"
-            >
-                Benson Chow
-            </a>
-        </p>
-    </footer>
 </section>
