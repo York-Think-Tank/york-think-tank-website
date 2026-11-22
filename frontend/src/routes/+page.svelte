@@ -11,7 +11,11 @@
 </script>
 
 <svelte:head>
-    <title>York Think Tank - University of York's Think Tank</title>
+    <title>York Think Tank</title>
+    <meta
+        name="description"
+        content="York Think Tank is the University of York's student think tank, the world's 2nd best student think tank according to https://onthinktanks.org/."
+    />
 </svelte:head>
 
 <Header />
