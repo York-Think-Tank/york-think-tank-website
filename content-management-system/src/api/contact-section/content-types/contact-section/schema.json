@@ -11,14 +11,18 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "email": {
-      "type": "email",
+    "contact_title": {
+      "type": "string",
       "required": true
     },
     "contact_links": {
       "type": "component",
       "repeatable": true,
       "component": "shared.link"
+    },
+    "join_title": {
+      "type": "string",
+      "required": true
     },
     "join_links": {
       "type": "component",

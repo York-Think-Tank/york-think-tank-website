@@ -630,11 +630,12 @@ export interface ApiContactSectionContactSection
   };
   attributes: {
     contact_links: Schema.Attribute.Component<'shared.link', true>;
+    contact_title: Schema.Attribute.String & Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    email: Schema.Attribute.Email & Schema.Attribute.Required;
     join_links: Schema.Attribute.Component<'shared.link', true>;
+    join_title: Schema.Attribute.String & Schema.Attribute.Required;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
