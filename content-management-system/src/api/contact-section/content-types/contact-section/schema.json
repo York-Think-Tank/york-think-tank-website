@@ -15,23 +15,15 @@
       "type": "email",
       "required": true
     },
-    "instagram_url": {
-      "type": "string"
+    "contact_links": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.link"
     },
-    "linkedin_url": {
-      "type": "string"
-    },
-    "youtube_url": {
-      "type": "string"
-    },
-    "membership_url": {
-      "type": "string"
-    },
-    "whatsapp_url": {
-      "type": "string"
-    },
-    "writer_signup_url": {
-      "type": "string"
+    "join_links": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.link"
     },
     "terms_url": {
       "type": "string"
