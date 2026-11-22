@@ -633,7 +633,6 @@ export interface ApiContactSectionContactSection
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    disclaimer_url: Schema.Attribute.String;
     email: Schema.Attribute.Email & Schema.Attribute.Required;
     join_links: Schema.Attribute.Component<'shared.link', true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
@@ -643,7 +642,34 @@ export interface ApiContactSectionContactSection
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
-    terms_url: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiFooterSectionFooterSection extends Struct.SingleTypeSchema {
+  collectionName: 'footer_sections';
+  info: {
+    displayName: 'Footer Section';
+    pluralName: 'footer-sections';
+    singularName: 'footer-section';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    links: Schema.Attribute.Component<'shared.link', true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::footer-section.footer-section'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1260,6 +1286,7 @@ declare module '@strapi/strapi' {
       'api::civitas-journal.civitas-journal': ApiCivitasJournalCivitasJournal;
       'api::civitas-policy-project.civitas-policy-project': ApiCivitasPolicyProjectCivitasPolicyProject;
       'api::contact-section.contact-section': ApiContactSectionContactSection;
+      'api::footer-section.footer-section': ApiFooterSectionFooterSection;
       'api::ytt-contributor.ytt-contributor': ApiYttContributorYttContributor;
       'api::ytt-event.ytt-event': ApiYttEventYttEvent;
       'plugin::content-releases.release': PluginContentReleasesRelease;

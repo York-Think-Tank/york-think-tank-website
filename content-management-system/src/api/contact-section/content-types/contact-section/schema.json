@@ -24,12 +24,6 @@
       "type": "component",
       "repeatable": true,
       "component": "shared.link"
-    },
-    "terms_url": {
-      "type": "string"
-    },
-    "disclaimer_url": {
-      "type": "string"
     }
   }
 }
